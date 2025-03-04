@@ -2,8 +2,11 @@ import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useParams } from "react-router";
+
 
 function Display() {
+  const { id } = useParams();
   const [backgroundImage, setBackgroundImage] = useState("");
   const [phoenixText, setPhoenixText] = useState("");
   const [pText, setPText] = useState("");
@@ -13,7 +16,7 @@ function Display() {
   // Fetch existing data from MongoDB
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_BASE_URL}/api/display`)
+      .get(`${process.env.REACT_APP_API_BASE_URL}/api/display/${id}`)
       .then((res) => {
         const data = res.data || {}; // ✅ Fix: Prevents errors if res.data is null
         setBackgroundImage(data.backgroundImage || "");
@@ -22,7 +25,7 @@ function Display() {
         setRoyalPassText(data.royalPassText || "");
       })
       .catch((error) => console.error("Error fetching data:", error));
-  }, []); // Runs once on component mount
+  }, [id]); // Runs once on component mount
 
   // Handle updates
   const handleUpdate = async () => {
@@ -152,7 +155,7 @@ function Display() {
   white-space: nowrap;
   font-size: 250px;
   font-weight: 900;
-  opacity: 50%;
+  opacity: 80%;
   line-height: 1;
   background: linear-gradient(90deg, #f5f3f6, #3498db, #f1c40f, #e74c3c);
   -webkit-background-clip: text;

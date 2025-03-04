@@ -57,14 +57,18 @@ const InfoSchema = new mongoose.Schema({
 
 const Info = mongoose.model("Info", InfoSchema);
 
+
+
 // Schema
 const displaySchema = new mongoose.Schema({
   backgroundImage: String,
   phoenixText: String,
   pText: String,
   royalPassText: String,
+  displayid: String,
 });
 const DisplayModel = mongoose.model("Display", displaySchema);
+
 
 const ShopSchema = new mongoose.Schema({
   title: String,
@@ -246,35 +250,39 @@ app.post("/send-message", async (req, res) => {
   }
 });
 
+
+
 // ✅ API to update or insert (fixing the duplicate route issue)
 app.post("/api/display", async (req, res) => {
   try {
-    let display = await DisplayModel.findOne();
-    if (!display) {
-      display = new DisplayModel(req.body);
-    } else {
-      Object.assign(display, req.body);
-    }
-    await display.save();
-    res.status(200).json({ message: "Updated Successfully!", display });
+    const newData = new DisplayModel(req.body);
+    await newData.save();
+    res.status(201).json({ message: "Added Successfully!", newData });
   } catch (error) {
-    console.error("Error updating:", error);
+    console.error("Error adding:", error);
     res.status(500).json({ message: "Server Error", error: error.message });
   }
 });
 
-// ✅ API to get saved data
-app.get("/api/display", async (req, res) => {
+// ✅ API to get saved data where project ID matches displayid
+app.get("/api/display/:id", async (req, res) => {
   try {
-    const data = await DisplayModel.findOne({});
+    const { id } = req.params; // 🔹 Get ID from URL
+
+    const data = await DisplayModel.findOne({ displayid: id });
+
+    if (!data) {
+      return res.status(404).json({ message: "No matching data found!" });
+    }
+
     res.status(200).json(data);
   } catch (error) {
     console.error("Error fetching:", error);
-    res
-      .status(500)
-      .json({ message: "Error fetching data", error: error.message });
+    res.status(500).json({ message: "Error fetching data", error: error.message });
   }
 });
+
+
 
 // GET API
 app.get("/shops", async (req, res) => {

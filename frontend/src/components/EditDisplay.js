@@ -2,8 +2,10 @@ import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useParams } from "react-router";
 
 function EditDisplay() {
+  const { id } = useParams();
   const [backgroundImage, setBackgroundImage] = useState("");
   const [phoenixText, setPhoenixText] = useState("");
   const [pText, setPText] = useState("");
@@ -13,7 +15,7 @@ function EditDisplay() {
   // Fetch existing data from MongoDB
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_BASE_URL}/api/display`)
+      .get(`${process.env.REACT_APP_API_BASE_URL}/api/display/${id}`)
       .then((res) => {
         const data = res.data || {}; // ✅ Fix: Prevents errors if res.data is null
         setBackgroundImage(data.backgroundImage || "");
@@ -22,28 +24,41 @@ function EditDisplay() {
         setRoyalPassText(data.royalPassText || "");
       })
       .catch((error) => console.error("Error fetching data:", error));
-  }, []); // Runs once on component mount
+  }, [id]); // Runs once on component mount
+
+
 
   // Handle updates
-  const handleUpdate = async () => {
+  const handleAdd = async () => {
     try {
-      const updatedData = {
+      const newData = {
         backgroundImage,
         phoenixText,
         pText,
         royalPassText,
+        displayid: id,
       };
 
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/display`, updatedData);
-      alert("Updated Successfully!");
+      await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/api/display`,
+        newData
+      );
+      alert("Added Successfully!");
+
+      // Reset the form after adding
+      setBackgroundImage("");
+      setPhoenixText("");
+      setPText("");
+      setRoyalPassText("");
 
       // ✅ Instead of making another GET request, update state directly
       setIsEditing(false);
     } catch (error) {
-      console.error("Error updating:", error);
-      alert("Error updating. Please check console for details.");
+      console.error("Error adding:", error);
+      alert("Error adding. Please check console for details.");
     }
   };
+
 
   // Handle image selection
   const handleImageChange = (e) => {
@@ -214,34 +229,34 @@ button {
 }
 
       `}</style>
-<div className="whole">
-      <div className="buttt">
-        <button onClick={() => setIsEditing(!isEditing)}>Edit</button>
-      </div>
-      {isEditing && (
-        <div className="edit-box">
-          <input type="file" onChange={handleImageChange} />
-          <input
-            type="text"
-            value={phoenixText}
-            onChange={(e) => setPhoenixText(e.target.value)}
-            placeholder="Edit Animation Name"
-          />
-          <input
-            type="text"
-            value={pText}
-            onChange={(e) => setPText(e.target.value)}
-            placeholder="Z"
-          />
-          <input
-            type="text"
-            value={royalPassText}
-            onChange={(e) => setRoyalPassText(e.target.value)}
-            placeholder="Service Name"
-          />
-          <button onClick={handleUpdate}>Save</button>
+      <div className="whole">
+        <div className="buttt">
+          <button onClick={() => setIsEditing(!isEditing)}>Edit</button>
         </div>
-      )}
+        {isEditing && (
+          <div className="edit-box">
+            <input type="file" onChange={handleImageChange} />
+            <input
+              type="text"
+              value={phoenixText}
+              onChange={(e) => setPhoenixText(e.target.value)}
+              placeholder="Edit Animation Name"
+            />
+            <input
+              type="text"
+              value={pText}
+              onChange={(e) => setPText(e.target.value)}
+              placeholder="Z"
+            />
+            <input
+              type="text"
+              value={royalPassText}
+              onChange={(e) => setRoyalPassText(e.target.value)}
+              placeholder="Service Name"
+            />
+            <button onClick={handleAdd}>Save</button>
+          </div>
+        )}
       </div>
       {/* 
         <div className="animated-display">

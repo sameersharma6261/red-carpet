@@ -2,7 +2,8 @@ import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
 import React from "react";
 import { useEffect } from "react";
-import { Link, useParams } from "react-router";import "./Explain.css";
+import { Link, useParams } from "react-router";
+import "./Explain.css";
 
 
 function Explain() {

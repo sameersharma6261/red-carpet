@@ -52,7 +52,7 @@ const BrandDashboard2 = () => {
           />
         </div>
         <p
-          style={{textAlign: "center",fontSize: "18px",color: "white",lineHeight: "1.6",
+          style={{textAlign: "center",fontSize: "18px",color: "gray",lineHeight: "1.6",
           }}
         >
           {shop.description}
