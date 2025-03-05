@@ -39,11 +39,21 @@ function EditDisplay() {
         displayid: id,
       };
 
-      await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/api/display`,
-        newData
-      );
-      alert("Added Successfully!");
+      if (isEditing) {
+        // ✅ Agar pehle se data exist karta hai toh update karo
+        await axios.put(
+          `${process.env.REACT_APP_API_BASE_URL}/api/display/${id}`,
+          newData
+        );
+        alert("Updated Successfully!");
+      } else {
+        // ✅ Naya data add karo
+        await axios.post(
+          `${process.env.REACT_APP_API_BASE_URL}/api/display`,
+          newData
+        );
+        alert("Added Successfully!");
+      }
 
       // Reset the form after adding
       setBackgroundImage("");
@@ -258,22 +268,7 @@ button {
           </div>
         )}
       </div>
-      {/* 
-        <div className="animated-display">
-          <div
-            className="circle-container"
-            style={{ backgroundImage: `url(${backgroundImage})` }}
-          >
-            <div className="slider-wrapper">
-              <div className="slider-text">{phoenixText}</div>
-              <div className="slider-text">{phoenixText}</div>
-            </div>
-          </div>
-          <div className="circle-container-text">
-            <div className="p">{pText}</div>
-            <div className="royal-pass">{royalPassText}</div>
-          </div>
-        </div> */}
+     
     </>
   );
 }

@@ -105,7 +105,7 @@ const BrandDashboard2 = () => {
                   <img
                     src={menuItem.image}
                     alt={menuItem.name}
-                    style={{width: "100%",height: "200px" ,borderRadius: "5px",marginTop: "10px",
+                    style={{ width: "100%",maxWidth: "500px",height: "200px" ,borderRadius: "5px",marginTop: "10px",
                     }}
                   />
                   

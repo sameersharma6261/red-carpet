@@ -103,28 +103,56 @@ app.post("/api/information", async (req, res) => {
   }
 });
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Countdown Schema
 const CountdownSchema = new mongoose.Schema({
   startTime: Number,
   duration: Number,
+  shopId: String,
 });
 const Countdown = mongoose.model("Countdown", CountdownSchema);
 
+
+
+
+
+
+
 // Start Countdown API
 app.post("/start-countdown", async (req, res) => {
-  const { duration, phoneNumber } = req.body;
+  const { duration, phoneNumber, shopId } = req.body;
   const startTime = Date.now();
 
   try {
-    await Countdown.deleteMany({});
-    const newCountdown = new Countdown({ startTime, duration });
+    const newCountdown = new Countdown({ startTime, duration, shopId });
     await newCountdown.save();
 
     // Emit countdown start event
-    io.emit("countdown-start", { startTime, duration });
+    io.emit("countdown-start", { startTime, duration, shopId  });
 
     // Twilio SMS Notification
-    const countdownLink = `${process.env.REACT_APP_API_BASE_URL}/countdown`;
+    const countdownLink = `${process.env.REACT_APP_API_BASE_URL}/countdown/:id`;
     await client.messages.create({
       body: `Countdown started! Track live here: ${countdownLink}`,
       from: process.env.TWILIO_PHONE,
@@ -147,6 +175,29 @@ app.get("/get-countdown", async (req, res) => {
     res.status(500).json({ message: "Error fetching countdown", error });
   }
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // WebSocket Connection
 io.on("connection", (socket) => {
@@ -234,7 +285,8 @@ app.post("/send-message", async (req, res) => {
 
   try {
     const message = await client.messages.create({
-      body: `🎉 Congratulations! your token number should be selected, now you can visit your counter, visit your countdown undertime  ${process.env.REACT_APP_API_BASE_URL}/countdown`,
+      body: `🎉 Congratulations! your token number should be selected, now you can visit your counter,
+       visit your countdown undertime  ${process.env.REACT_APP_API_BASE_URL}/countdown`,
       from: twilioPhone,
       to: `+91${number}`,
     });
@@ -252,7 +304,7 @@ app.post("/send-message", async (req, res) => {
 
 
 
-// ✅ API to update or insert (fixing the duplicate route issue)
+// ✅ API to insert 
 app.post("/api/display", async (req, res) => {
   try {
     const newData = new DisplayModel(req.body);
@@ -281,6 +333,28 @@ app.get("/api/display/:id", async (req, res) => {
     res.status(500).json({ message: "Error fetching data", error: error.message });
   }
 });
+// ✅ API to update existing data where project ID matches displayid
+app.put("/api/display/:id", async (req, res) => {
+  try {
+    const { id } = req.params; // Get ID from URL
+
+    const updatedData = await DisplayModel.findOneAndUpdate(
+      { displayid: id }, // Find by displayid
+      { $set: req.body }, // Update with new data
+      { new: true } // Return updated document
+    );
+
+    if (!updatedData) {
+      return res.status(404).json({ message: "No matching data found to update!" });
+    }
+
+    res.status(200).json({ message: "Updated Successfully!", updatedData });
+  } catch (error) {
+    console.error("Error updating:", error);
+    res.status(500).json({ message: "Error updating data", error: error.message });
+  }
+});
+
 
 
 
@@ -329,7 +403,7 @@ app.get("/shops/:id", async (req, res) => {
 // ye hai edit or save karne ke liye(fruits names,price example)
 app.put("/shops/update-menu-item/:id/:name", async (req, res) => {
   const { id, name } = req.params;
-  const { newName, newPrice, newDescription, newLink } = req.body;
+  const { newName, newPrice, newDescription, newLink, newImage } = req.body;
 
   try {
     const shop = await Shop.findById(id);
@@ -349,6 +423,7 @@ app.put("/shops/update-menu-item/:id/:name", async (req, res) => {
     // Update the item
     shop.menuItems[itemIndex].name = newName;
     shop.menuItems[itemIndex].price = newPrice;
+    shop.menuItems[itemIndex].image = newImage;
     shop.menuItems[itemIndex].link = newLink;
     shop.menuItems[itemIndex].description = newDescription;
 

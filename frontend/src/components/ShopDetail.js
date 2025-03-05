@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
@@ -10,14 +9,18 @@ const ShopDetail = () => {
   const [editingItem, setEditingItem] = useState(null);
   const [editedName, setEditedName] = useState("");
   const [editedLink, setEditedLink] = useState("");
+  const [editedImage, setEditedImage] = useState("");
   const [editedDescription, setEditedDescription] = useState("");
   const [selectedFood, setSelectedFood] = useState(null);
-
+  const [searchQuery, setSearchQuery] = useState(""); // State for search input
+  
 
   useEffect(() => {
     const fetchShopDetails = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/shops/${id}`);
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_BASE_URL}/shops/${id}`
+        );
         setShop(response.data);
       } catch (error) {
         console.error("Error fetching shop details:", error);
@@ -30,6 +33,7 @@ const ShopDetail = () => {
     setEditingItem(menuItem);
     setEditedName(menuItem.name);
     setEditedLink(menuItem.link);
+    setEditedImage(menuItem.image);
     setEditedDescription(menuItem.editeddescription);
   };
 
@@ -37,12 +41,23 @@ const ShopDetail = () => {
     try {
       const response = await axios.put(
         `${process.env.REACT_APP_API_BASE_URL}/shops/update-menu-item/${id}/${menuItem.name}`,
-        { newName: editedName, newLink: editedLink, newDescription: editedDescription }
+        {
+          newName: editedName,
+          newLink: editedLink,
+          newImage: editedImage,
+          newDescription: editedDescription,
+        }
       );
       if (response.data.success) {
         const updatedItems = shop.menuItems.map((item) =>
           item.name === menuItem.name
-            ? { ...item, name: editedName, link: editedLink, description: editedDescription }
+            ? {
+                ...item,
+                name: editedName,
+                link: editedLink,
+                image: editedImage,
+                description: editedDescription,
+              }
             : item
         );
         setShop({ ...shop, menuItems: updatedItems });
@@ -73,22 +88,49 @@ const ShopDetail = () => {
     setSelectedFood(shop);
   };
 
+   // Filtering menu items based on search query
+   const filteredMenuItems = shop
+   ? shop.menuItems.filter((item) =>
+       item.name.toLowerCase().includes(searchQuery.toLowerCase())
+     )
+   : [];
+
   return (
     <div style={styles.container}>
       <h2 style={styles.heading}>Shop Details</h2>
-      <button onClick={() => handleManageMenu(shop)} style={styles.editButton}>Add Shop's</button>
-      {selectedFood && <MenuModal shop={selectedFood} onClose={() => setSelectedFood(null)} />}
+       {/* Search Bar */}
+       <input
+            type="text"
+            placeholder="Search menu items..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{
+              padding: "10px",
+              width: "60%",
+              borderRadius: "5px",
+              border: "1px solid #ccc",
+              marginBottom: "20px",
+              fontSize: "16px",
+            }}
+          />
+      <button onClick={() => handleManageMenu(shop)} style={styles.editButton}>
+        Add Shop's
+      </button>
+      {selectedFood && (
+        <MenuModal shop={selectedFood} onClose={() => setSelectedFood(null)} />
+      )}
 
       {shop ? (
         <div style={styles.card}>
-        
           <h3 style={styles.shopName}>{shop.name}</h3>
           <img src={shop.imageUrl} alt={shop.name} style={styles.shopImage} />
           <ul style={styles.list}>
-            {shop.menuItems.map((menuItem, index) => (
+          {filteredMenuItems.map((menuItem, index) => (
               <li key={index} style={styles.listItem}>
                 <div style={styles.textContainer}>
-                  <span style={styles.shopText}>{menuItem.name} - {menuItem.description} - {menuItem.link}</span>
+                  <span style={styles.shopText}>
+                    {menuItem.name} - {menuItem.description} - {menuItem.link} - {menuItem.image}
+                  </span>
                 </div>
                 <div style={styles.actionContainer}>
                   {editingItem === menuItem ? (
@@ -108,17 +150,44 @@ const ShopDetail = () => {
                       />
                       <input
                         type="text"
+                        placeholder="link"
                         value={editedLink}
                         onChange={(e) => setEditedLink(e.target.value)}
                         style={styles.input}
                       />
-                      <button onClick={() => handleSave(menuItem)} style={styles.saveButton}>Save</button>
-                      <button onClick={() => setEditingItem(null)} style={styles.cancelButton}>Cancel</button>
+                      <input
+                        type="text"
+                        value={editedImage}
+                        onChange={(e) => setEditedImage(e.target.value)}
+                        style={styles.input}
+                      />
+                      <button
+                        onClick={() => handleSave(menuItem)}
+                        style={styles.saveButton}
+                      >
+                        Save
+                      </button>
+                      <button
+                        onClick={() => setEditingItem(null)}
+                        style={styles.cancelButton}
+                      >
+                        Cancel
+                      </button>
                     </>
                   ) : (
                     <>
-                      <button onClick={() => handleEdit(menuItem)} style={styles.editButton} >Edit</button>
-                      <button onClick={() => handleDelete(menuItem)} style={styles.deleteButton}>Delete</button>
+                      <button
+                        onClick={() => handleEdit(menuItem)}
+                        style={styles.editButton}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(menuItem)}
+                        style={styles.deleteButton}
+                      >
+                        Delete
+                      </button>
                     </>
                   )}
                 </div>
@@ -149,7 +218,7 @@ const styles = {
   heading: {
     fontSize: "28px",
     fontWeight: "bold",
-    marginBottom: "20px",
+    marginBottom: "10px",
     color: "black",
     padding: "15px",
   },
@@ -236,7 +305,7 @@ const styles = {
     background: "#ff5722",
     color: "#fff",
     border: "none",
-    padding: "8px 12px",
+    padding: "5px 12px",
     cursor: "pointer",
     borderRadius: "5px",
   },

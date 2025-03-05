@@ -2,15 +2,21 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+
 const BrandDashboard = () => {
   const [shops, setFoods] = useState([]);
   const navigate = useNavigate();
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     axios
       .get(`${process.env.REACT_APP_API_BASE_URL}/shops`)
       .then((res) => setFoods(res.data));
   }, []);
+
+  const filteredShops = shops.filter((shop) =>
+    shop.title.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div
@@ -32,22 +38,44 @@ const BrandDashboard = () => {
       <h1 style={{ color: "#333", marginBottom: "20px", fontSize: "28px" }}>
         SELECT YOUR MALL
       </h1>
+      <input
+        type="text"
+        placeholder="Search Mall..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        style={{
+          padding: "10px",
+          width: "60%",
+          borderRadius: "5px",
+          border: "1px solid #ccc",
+          marginBottom: "20px",
+          fontSize: "16px",
+        }}
+      />
       <div
         style={{
-          display: "grid",
-          width: "90%",
-          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-          gap: "20px",
+          display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          flexWrap: "wrap",
+          width: "100%",
+          gap: "20px",
           zIndex: "2",
+          textAlign: "center",
         }}
       >
-        {shops.map((shop) => (
+
+
+
+
+
+        {filteredShops.map((shop) => (
           <div
             key={shop._id}
             style={{
               borderRadius: "15px",
+              width: "100%",
+              maxWidth: "500px",
               padding: "25px",
               background: "rgba(255, 255, 255, 0.7)",
               boxShadow: "0 10px 30px rgba(0, 0, 0, 0.1)",
@@ -75,6 +103,7 @@ const BrandDashboard = () => {
               alt={shop.title}
               style={{
                 width: "100%",
+                maxWidth: "500px",
                 height: "250px",
                 objectFit: "cover",
                 borderRadius: "10px",

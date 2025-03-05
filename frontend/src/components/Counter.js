@@ -2,10 +2,10 @@ import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router";
 import "./Counter.css";
-import { useParams } from "react-router-dom"; 
+import { useParams } from "react-router-dom";
 
 const Counter = () => {
-  const { id } = useParams(); 
+  const { id } = useParams();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ const Counter = () => {
     try {
       const response = await axios.get(
         // `${process.env.REACT_APP_API_BASE_URL}/api/get-data`
-         `${process.env.REACT_APP_API_BASE_URL}/api/get-data/${id}`
+        `${process.env.REACT_APP_API_BASE_URL}/api/get-data/${id}`
       );
       let fetchedData = response.data;
 
@@ -64,9 +64,25 @@ const Counter = () => {
     await fetch(`${process.env.REACT_APP_API_BASE_URL}/start-countdown`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ duration, phoneNumber }),
+      body: JSON.stringify({ duration, phoneNumber, shopId:id }),
     });
   };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   // Handle button click
   const handleClick = async (index) => {
@@ -83,6 +99,16 @@ const Counter = () => {
     }
   };
 
+
+
+
+
+
+
+
+
+
+  
   // Handle sending the message
   const handleSendMessage = async (number) => {
     if (!number) {
