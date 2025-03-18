@@ -15,6 +15,8 @@ function Display() {
 
   // Fetch existing data from MongoDB
   useEffect(() => {
+    
+    if(!id)return
     axios
       .get(`${process.env.REACT_APP_API_BASE_URL}/api/display/${id}`)
       .then((res) => {
@@ -24,7 +26,11 @@ function Display() {
         setPText(data.pText || "");
         setRoyalPassText(data.royalPassText || "");
       })
-      .catch((error) => console.error("Error fetching data:", error));
+      
+      .catch((error) =>{
+         console.error("Error fetching data:", error)
+
+      });
   }, [id]); // Runs once on component mount
 
   // Handle updates

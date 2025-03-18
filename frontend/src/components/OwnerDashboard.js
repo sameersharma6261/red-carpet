@@ -4,20 +4,38 @@ import { useNavigate } from "react-router-dom";
 
 const OwnerDashboard = () => {
   const navigate = useNavigate();
-    const [search, setSearch] = useState("");
+  const [search, setSearch] = useState("");
   const [shops, setFoods] = useState([]);
   const [newFood, setNewFood] = useState({
     title: "",
     description: "",
     image: "",
+    email: "",
+    password: "",
+    mallconpassword: "",
+    role: "",
   });
   const [editFood, setEditFood] = useState(null);
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("shopId");
+    navigate("/");
+  };
+
   useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_API_BASE_URL}/shops`)
-      .then((res) => setFoods(res.data));
+    axios.get(`${process.env.REACT_APP_API_BASE_URL}/shops`).then((res) => {
+      setFoods(res.data);
+    });
   }, []);
+
+  const role = localStorage.getItem("role");
+  useEffect(() => {
+    if (role && role !== "superadmin") {
+      navigate("/");
+    }
+  }, [role, navigate]);
 
   const handleChange = (e) => {
     setNewFood({ ...newFood, [e.target.name]: e.target.value });
@@ -35,7 +53,15 @@ const OwnerDashboard = () => {
           setFoods(
             shops.map((shop) => (shop._id === editFood._id ? res.data : shop))
           );
-          setNewFood({ title: "", description: "", image: "" });
+          setNewFood({
+            title: "",
+            description: "",
+            image: "",
+            email: "",
+            password: "",
+            mallconpassword: "",
+            role: "",
+          });
           setEditFood(null);
         });
     } else {
@@ -43,7 +69,15 @@ const OwnerDashboard = () => {
         .post(`${process.env.REACT_APP_API_BASE_URL}/shops`, newFood)
         .then((res) => {
           setFoods([...shops, res.data]);
-          setNewFood({ title: "", description: "", image: "" });
+          setNewFood({
+            title: "",
+            description: "",
+            image: "",
+            email: "",
+            password: "",
+            mallconpassword: "",
+            role: "",
+          });
         });
     }
   };
@@ -61,18 +95,31 @@ const OwnerDashboard = () => {
       });
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/");
-  };
+  console.log({ shops });
 
   const filteredShops = shops.filter((shop) =>
-    shop.title.toLowerCase().includes(search.toLowerCase())
+    shop?.title?.toLowerCase().includes(search.toLowerCase())
   );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   return (
     <div className="dashboard-container">
-       <h1 style={{ color: "#333", marginBottom: "20px", fontSize: "28px" }}>
+      <h1 style={{ color: "white", marginBottom: "20px", fontSize: "28px",  }}>
         SELECT YOUR MALL
       </h1>
       <input
@@ -81,12 +128,15 @@ const OwnerDashboard = () => {
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         style={{
+          position: "fixed",
+          top: "52px",
           padding: "10px",
           width: "60%",
           borderRadius: "5px",
           border: "1px solid #ccc",
           marginBottom: "20px",
           fontSize: "16px",
+          zIndex: "5",
         }}
       />
       <form onSubmit={handleSubmit} className="shop-form">
@@ -114,15 +164,53 @@ const OwnerDashboard = () => {
           onChange={handleChange}
           required
         />
+        <input
+          type="text"
+          name="email"
+          placeholder="Set email"
+          value={newFood.email}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="text"
+          name="password"
+          placeholder="Set password"
+          value={newFood.password}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="text"
+          name="mallconpassword"
+          placeholder="conferm password"
+          value={newFood.mallconpassword}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="text"
+          name="role"
+          placeholder="Set role"
+          value={newFood.role}
+          onChange={handleChange}
+          required
+        />
+
         <button type="submit">{editFood ? "Update mall" : "Add mall"}</button>
       </form>
 
       <div className="shop-container">
-      {filteredShops.map((shop) => (
+        {filteredShops.map((shop) => (
           <div key={shop._id} className="shop-card">
             <img src={shop.image} alt={shop.title} className="shop-image" />
-            <h3>{shop.title}</h3>
+            <h3>{shop?.title}</h3>
             <p>{shop.description}</p>
+            <p>{shop.email}</p>
+            <p>{shop.password}</p>
+            <p>{shop.mallconpassword}</p>
+            <p>{shop.role}</p>
+
             <div className="button-group">
               <button onClick={() => navigate(`/shop/${shop._id}`)}>
                 Shop's
@@ -134,7 +222,34 @@ const OwnerDashboard = () => {
             </div>
           </div>
         ))}
+        <button
+          onClick={() => navigate("/branddashboard")}
+          style={{
+            padding: "12px",
+            borderRadius: "20px",
+            border: "none",
+            cursor: "pointer",
+            position: "fixed",
+            left: "15px",
+            bottom: "15px",
+            color: "white",
+            fontSize: "15px",
+            background: "#ff4d4d",
+            fontWeight: "bold",
+            zIndex: "3",
+          }}
+        >
+          SETTING
+        </button>
       </div>
+
+
+
+
+
+
+
+
 
       <style>{`
         .dashboard-container {
@@ -144,22 +259,16 @@ const OwnerDashboard = () => {
           align-items: center;
           position: absolute;
           left: 0;
-          background: linear-gradient(to right, #e0f7fa, #ffffff);
+          // background: "linear-gradient(to right,rgb(0, 0, 0),rgb(148, 148, 148))",
+          // background-image: url('/images/f.jpg'); 
+          // background-size: cover;
+          // background-position: center;
+           background-attachment: fixed; /* Background ko fix karne ke liye */
+          overflow: auto; /* Ensure content inside can scroll */
           min-height: 100vh;
           text-align: center;
           font-family: 'Poppins', sans-serif;
           z-index: 1;
-        }
-        .logout-btn {
-          position: fixed;
-          right: 20px;
-          bottom: 20px;
-          background: #ff4d4d;
-          color: white;
-          border: none;
-          padding: 10px 20px;
-          border-radius: 8px;
-          cursor: pointer;
         }
 
         h3{
@@ -172,10 +281,8 @@ const OwnerDashboard = () => {
 
         p{
         margin: 10px;
+        overflow: hidden;
         }
-
-
-
 
         .shop-form {
           display: flex;
@@ -183,7 +290,10 @@ const OwnerDashboard = () => {
           justify-content: center;
           gap: 10px;
           margin-top: 0;
-           margin-bottom: 20px;
+          margin-bottom: 20px;
+          position: fixed;
+          top: 100px;
+          z-index: 5;
         }
         .shop-form input, .shop-form button {
           padding: 10px;
@@ -197,11 +307,26 @@ const OwnerDashboard = () => {
           cursor: pointer;
           background: linear-gradient(to right,rgba(79, 172, 254, 0.64),rgba(0, 241, 254, 0.69));}
 
+
+
+
+
+
+
+
+
+
+
+
+
         .shop-container {
           display: flex;
           flex-wrap: wrap;
           justify-content: center;
           gap: 20px;
+          min-height: 100vh;
+          position: absolute;
+          top: 160px;
           width: 100%;
         }
         .shop-card {
@@ -252,7 +377,22 @@ const OwnerDashboard = () => {
 background: linear-gradient(to right, #00f2fe, #4facfe);
         }
       `}</style>
-      <button onClick={handleLogout} className="logout-btn">
+      <button
+        onClick={handleLogout}
+        style={{
+          padding: "12px",
+          background: "#ff4d4d",
+          color: "#fff",
+          border: "none",
+          position: "fixed",
+          right: "15px",
+          bottom: "15px",
+          zIndex: "2",
+          borderRadius: "5px",
+          cursor: "pointer",
+          marginTop: "10px",
+        }}
+      >
         Logout
       </button>
     </div>

@@ -11,9 +11,12 @@ const ShopDetail = () => {
   const [editedLink, setEditedLink] = useState("");
   const [editedImage, setEditedImage] = useState("");
   const [editedDescription, setEditedDescription] = useState("");
+  const [editedEmail, setEditedEmail] = useState("");
+  const [editedPassword, setEditedPassword] = useState("");
+  const [editedShopConPassword, setEditedShopConPassword] = useState("");
+  const [editedRole, setEditedRole] = useState("");
   const [selectedFood, setSelectedFood] = useState(null);
   const [searchQuery, setSearchQuery] = useState(""); // State for search input
-  
 
   useEffect(() => {
     const fetchShopDetails = async () => {
@@ -35,6 +38,10 @@ const ShopDetail = () => {
     setEditedLink(menuItem.link);
     setEditedImage(menuItem.image);
     setEditedDescription(menuItem.editeddescription);
+    setEditedEmail(menuItem.editedemail);
+    setEditedPassword(menuItem.editedpassword);
+    setEditedShopConPassword(menuItem.editedshopconpassword);
+    setEditedRole(menuItem.editedrole);
   };
 
   const handleSave = async (menuItem) => {
@@ -46,6 +53,10 @@ const ShopDetail = () => {
           newLink: editedLink,
           newImage: editedImage,
           newDescription: editedDescription,
+          newEmail: editedEmail,
+          newPassword: editedPassword,
+          newShopConPassword: editedShopConPassword,
+          newRole: editedRole,
         }
       );
       if (response.data.success) {
@@ -57,6 +68,10 @@ const ShopDetail = () => {
                 link: editedLink,
                 image: editedImage,
                 description: editedDescription,
+                newEmail: editedEmail,
+                newPassword: editedPassword,
+                newShopConPassword: editedShopConPassword,
+                newRole: editedRole,
               }
             : item
         );
@@ -88,48 +103,53 @@ const ShopDetail = () => {
     setSelectedFood(shop);
   };
 
-   // Filtering menu items based on search query
-   const filteredMenuItems = shop
-   ? shop.menuItems.filter((item) =>
-       item.name.toLowerCase().includes(searchQuery.toLowerCase())
-     )
-   : [];
+  // Filtering menu items based on search query
+  const filteredMenuItems = shop
+    ? shop.menuItems.filter((item) =>
+        item.name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : [];
 
   return (
     <div style={styles.container}>
       <h2 style={styles.heading}>Shop Details</h2>
-       {/* Search Bar */}
-       <input
-            type="text"
-            placeholder="Search menu items..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            style={{
-              padding: "10px",
-              width: "60%",
-              borderRadius: "5px",
-              border: "1px solid #ccc",
-              marginBottom: "20px",
-              fontSize: "16px",
-            }}
-          />
+      {/* Search Bar */}
+      <input
+        type="text"
+        placeholder="Search shops..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        style={{
+          padding: "10px",
+          width: "60%",
+          borderRadius: "5px",
+          border: "1px solid #ccc",
+          marginBottom: "20px",
+          position: "fixed",
+          top: "53px",
+          fontSize: "16px",
+          zIndex: "5"
+        }}
+      />
+      <div style={{zIndex: "5", position: "fixed", top: "100px", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
       <button onClick={() => handleManageMenu(shop)} style={styles.editButton}>
         Add Shop's
       </button>
       {selectedFood && (
         <MenuModal shop={selectedFood} onClose={() => setSelectedFood(null)} />
       )}
+      </div>
 
       {shop ? (
         <div style={styles.card}>
           <h3 style={styles.shopName}>{shop.name}</h3>
           <img src={shop.imageUrl} alt={shop.name} style={styles.shopImage} />
           <ul style={styles.list}>
-          {filteredMenuItems.map((menuItem, index) => (
+            {filteredMenuItems.map((menuItem, index) => (
               <li key={index} style={styles.listItem}>
                 <div style={styles.textContainer}>
                   <span style={styles.shopText}>
-                    {menuItem.name} - {menuItem.description} - {menuItem.link} - {menuItem.image}
+                    {menuItem.name} - {menuItem.description} - {menuItem.image} - {menuItem.email} - {menuItem.password} - {menuItem.shopconpassword} - {menuItem.role}
                   </span>
                 </div>
                 <div style={styles.actionContainer}>
@@ -148,17 +168,40 @@ const ShopDetail = () => {
                         onChange={(e) => setEditedDescription(e.target.value)}
                         style={styles.input}
                       />
-                      <input
-                        type="text"
-                        placeholder="link"
-                        value={editedLink}
-                        onChange={(e) => setEditedLink(e.target.value)}
-                        style={styles.input}
-                      />
+
                       <input
                         type="text"
                         value={editedImage}
                         onChange={(e) => setEditedImage(e.target.value)}
+                        style={styles.input}
+                      />
+
+                      <input
+                        type="text"
+                        placeholder="email"
+                        value={editedEmail}
+                        onChange={(e) => setEditedEmail(e.target.value)}
+                        style={styles.input}
+                      />
+                      <input
+                        type="text"
+                        placeholder="password"
+                        value={editedPassword}
+                        onChange={(e) => setEditedPassword(e.target.value)}
+                        style={styles.input}
+                      />
+                      <input
+                        type="text"
+                        placeholder="conferm password"
+                        value={editedShopConPassword}
+                        onChange={(e) => setEditedShopConPassword(e.target.value)}
+                        style={styles.input}
+                      />
+                      <input
+                        type="text"
+                        placeholder="role"
+                        value={editedRole}
+                        onChange={(e) => setEditedRole(e.target.value)}
                         style={styles.input}
                       />
                       <button
@@ -211,24 +254,47 @@ const styles = {
     flexDirection: "column",
     minHeight: "100vh",
     position: "absolute",
+    backgroundAttachment: "fixed",
+    overflow: "auto",
     left: 0,
-    background: "linear-gradient(to right, #e0f7fa, #ffffff)",
     zIndex: 1,
   },
   heading: {
     fontSize: "28px",
     fontWeight: "bold",
     marginBottom: "10px",
-    color: "black",
+    color: "white",
     padding: "15px",
   },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   card: {
     backdropFilter: "blur(10px)",
     background: "white",
     boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)",
     padding: "20px",
+    backgroundAttachment: "fixed",
+    overflow: "auto",
+    minHeight: "80vh",
     width: "80%",
     borderRadius: "10px",
+    position: "absolute",
+    top: "200px",
   },
   shopName: {
     fontSize: "22px",

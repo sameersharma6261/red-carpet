@@ -5,10 +5,15 @@ const bodyParser = require("body-parser");
 const dataRoutes = require("./routes/dataRoutes");
 const twilio = require("twilio");
 const User = require("./models/data");
+const ShopUser = require("./models/User");
 const http = require("http");
 const socketIo = require("socket.io");
 const authRoutes = require("./routes/auth");
 const menuRoutes = require("./routes/menuRoutes"); // ✅ Add this line
+const displayRoutes = require("./routes/displayRoutes"); // ✅ Add this line
+const forgotPasswordRoutes = require("./routes/forgotPasswordRoutes"); // Ensure path is correct
+
+const bcrypt = require("bcryptjs");
 
 // load enviromental variables
 require("dotenv").config();
@@ -25,6 +30,8 @@ app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", authRoutes);
 app.use("/api", menuRoutes); // ✅ Add this line
+app.use("/api", forgotPasswordRoutes); // Route prefix should match frontend call
+
 
 // Database Connection
 mongoose
@@ -46,35 +53,33 @@ app.use(express.urlencoded({ limit: "200mb", extended: true }));
 
 // API route
 app.use("/api", dataRoutes);
+app.use("/", displayRoutes);
 
-// Schema and Model
-const InfoSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  mobile: { type: String, required: true },
-  email: { type: String, required: true },
-  token: { type: Number, required: true },
-});
+// // Schema and Model
+// const InfoSchema = new mongoose.Schema({
+//   name: { type: String, required: true },
+//   mobile: { type: String, required: true },
+//   email: { type: String, required: true },
+//   token: { type: Number, required: true },
+// });
 
-const Info = mongoose.model("Info", InfoSchema);
+// const Info = mongoose.model("Info", InfoSchema);
 
+// // Schema
+// const displaySchema = new mongoose.Schema({
+//   backgroundImage: String,
+//   phoenixText: String,
+//   pText: String,
+//   royalPassText: String,
+//   displayid: String,
+// });
+// const DisplayModel = mongoose.model("Display", displaySchema);
 
-
-// Schema
-const displaySchema = new mongoose.Schema({
-  backgroundImage: String,
-  phoenixText: String,
-  pText: String,
-  royalPassText: String,
-  displayid: String,
-});
-const DisplayModel = mongoose.model("Display", displaySchema);
-
-
-const ShopSchema = new mongoose.Schema({
-  title: String,
-  description: String,
-  image: String,
-});
+// const ShopSchema = new mongoose.Schema({
+//   title: String,
+//   description: String,
+//   image: String,
+// });
 
 const Shop = require("./models/Shop"); // ✅ Ensure single import
 const {
@@ -103,28 +108,6 @@ app.post("/api/information", async (req, res) => {
   }
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Countdown Schema
 const CountdownSchema = new mongoose.Schema({
   startTime: Number,
@@ -132,12 +115,6 @@ const CountdownSchema = new mongoose.Schema({
   shopId: String,
 });
 const Countdown = mongoose.model("Countdown", CountdownSchema);
-
-
-
-
-
-
 
 // Start Countdown API
 app.post("/start-countdown", async (req, res) => {
@@ -149,7 +126,7 @@ app.post("/start-countdown", async (req, res) => {
     await newCountdown.save();
 
     // Emit countdown start event
-    io.emit("countdown-start", { startTime, duration, shopId  });
+    io.emit("countdown-start", { startTime, duration, shopId });
 
     // Twilio SMS Notification
     const countdownLink = `${process.env.REACT_APP_API_BASE_URL}/countdown/:id`;
@@ -175,29 +152,6 @@ app.get("/get-countdown", async (req, res) => {
     res.status(500).json({ message: "Error fetching countdown", error });
   }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // WebSocket Connection
 io.on("connection", (socket) => {
@@ -302,61 +256,56 @@ app.post("/send-message", async (req, res) => {
   }
 });
 
+// // ✅ API to insert
+// app.post("/api/display", async (req, res) => {
+//   try {
+//     const newData = new DisplayModel(req.body);
+//     await newData.save();
+//     res.status(201).json({ message: "Added Successfully!", newData });
+//   } catch (error) {
+//     console.error("Error adding:", error);
+//     res.status(500).json({ message: "Server Error", error: error.message });
+//   }
+// });
 
+// // ✅ API to get saved data where project ID matches displayid
+// app.get("/api/display/:id", async (req, res) => {
+//   try {
+//     const { id } = req.params; // 🔹 Get ID from URL
 
-// ✅ API to insert 
-app.post("/api/display", async (req, res) => {
-  try {
-    const newData = new DisplayModel(req.body);
-    await newData.save();
-    res.status(201).json({ message: "Added Successfully!", newData });
-  } catch (error) {
-    console.error("Error adding:", error);
-    res.status(500).json({ message: "Server Error", error: error.message });
-  }
-});
+//     const data = await DisplayModel.findOne({ displayid: id });
 
-// ✅ API to get saved data where project ID matches displayid
-app.get("/api/display/:id", async (req, res) => {
-  try {
-    const { id } = req.params; // 🔹 Get ID from URL
+//     if (!data) {
+//       return res.status(404).json({ message: "No matching data found!" });
+//     }
 
-    const data = await DisplayModel.findOne({ displayid: id });
+//     res.status(200).json(data);
+//   } catch (error) {
+//     console.error("Error fetching:", error);
+//     res.status(500).json({ message: "Error fetching data", error: error.message });
+//   }
+// });
+// // ✅ API to update existing data where project ID matches displayid
+// app.put("/api/display/:id", async (req, res) => {
+//   try {
+//     const { id } = req.params; // Get ID from URL
 
-    if (!data) {
-      return res.status(404).json({ message: "No matching data found!" });
-    }
+//     const updatedData = await DisplayModel.findOneAndUpdate(
+//       { displayid: id }, // Find by displayid
+//       { $set: req.body }, // Update with new data
+//       { new: true } // Return updated document
+//     );
 
-    res.status(200).json(data);
-  } catch (error) {
-    console.error("Error fetching:", error);
-    res.status(500).json({ message: "Error fetching data", error: error.message });
-  }
-});
-// ✅ API to update existing data where project ID matches displayid
-app.put("/api/display/:id", async (req, res) => {
-  try {
-    const { id } = req.params; // Get ID from URL
+//     if (!updatedData) {
+//       return res.status(404).json({ message: "No matching data found to update!" });
+//     }
 
-    const updatedData = await DisplayModel.findOneAndUpdate(
-      { displayid: id }, // Find by displayid
-      { $set: req.body }, // Update with new data
-      { new: true } // Return updated document
-    );
-
-    if (!updatedData) {
-      return res.status(404).json({ message: "No matching data found to update!" });
-    }
-
-    res.status(200).json({ message: "Updated Successfully!", updatedData });
-  } catch (error) {
-    console.error("Error updating:", error);
-    res.status(500).json({ message: "Error updating data", error: error.message });
-  }
-});
-
-
-
+//     res.status(200).json({ message: "Updated Successfully!", updatedData });
+//   } catch (error) {
+//     console.error("Error updating:", error);
+//     res.status(500).json({ message: "Error updating data", error: error.message });
+//   }
+// });
 
 // GET API
 app.get("/shops", async (req, res) => {
@@ -373,12 +322,13 @@ app.get("/menus/:id", async (req, res) => {
   }
 });
 
+
 app.put("/shops/:id", async (req, res) => {
   const { id } = req.params;
   const updatedData = req.body;
-
+const hassPas = await bcrypt.hash(req.body.password, 10);
   try {
-    const updatedShop = await Shop.findByIdAndUpdate(id, updatedData, {
+    const updatedShop = await Shop.findByIdAndUpdate(id, {...updatedData,password:hassPas}, {
       new: true,
     });
     if (!updatedShop) {
@@ -400,11 +350,21 @@ app.get("/shops/:id", async (req, res) => {
   }
 });
 
-// ye hai edit or save karne ke liye(fruits names,price example)
+
+
+// ye hai edit or save karne ke liye(fruits names, example)
 app.put("/shops/update-menu-item/:id/:name", async (req, res) => {
   const { id, name } = req.params;
-  const { newName, newPrice, newDescription, newLink, newImage } = req.body;
-
+  const {
+    newName,
+    newDescription,
+    newLink,
+    newImage,
+    newEmail,
+    newPassword,
+    newShopConPassword,
+    newRole,
+  } = req.body;
   try {
     const shop = await Shop.findById(id);
     if (!shop) {
@@ -419,13 +379,21 @@ app.put("/shops/update-menu-item/:id/:name", async (req, res) => {
         .status(404)
         .json({ success: false, message: "Menu item not found" });
     }
-
     // Update the item
     shop.menuItems[itemIndex].name = newName;
-    shop.menuItems[itemIndex].price = newPrice;
     shop.menuItems[itemIndex].image = newImage;
     shop.menuItems[itemIndex].link = newLink;
     shop.menuItems[itemIndex].description = newDescription;
+    shop.menuItems[itemIndex].email = newEmail;
+    shop.menuItems[itemIndex].shopconpassword = newShopConPassword;
+    shop.menuItems[itemIndex].role = newRole;
+
+    // ✅ Hash the new password only if provided
+    if (newPassword) {
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      shop.menuItems[itemIndex].password = hashedPassword;
+    }
+
 
     // Save to database
     await shop.save();
@@ -474,11 +442,53 @@ app.delete("/shops/delete-menu-item/:id/:name", async (req, res) => {
   }
 });
 
+
 // POST API
+// app.post("/shops", async (req, res) => {
+//   const shop = new Shop(req.body);
+//   console.log(req.body,shop);
+//   await shop.save();
+//     const hashedPassword = await bcrypt.hash(shop.password, 10);
+
+//   const user = new ShopUser({
+//     email: shop.email,
+//     password: hashedPassword,
+//     role: shop.role,
+//   });
+
+//   await user.save();
+//   res.json(shop);
+// });
+
+
+
+// hashed password hai ish mai
 app.post("/shops", async (req, res) => {
-  const shop = new Shop(req.body);
-  await shop.save();
-  res.json(shop);
+  try {
+    // Pehle password hash karo
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
+    // Ab hashed password ko shop object me save karo
+    const shop = new Shop({
+      ...req.body,
+      password: hashedPassword, // Hashed password assign kiya
+    });
+
+    await shop.save();
+
+    const user = new ShopUser({
+      email: shop.email,
+      password: hashedPassword, // Hashed password yahan bhi use ho raha
+      role: shop.role,
+    });
+
+    await user.save();
+    
+    res.json(shop);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 });
 
 app.delete("/shops/:id", async (req, res) => {

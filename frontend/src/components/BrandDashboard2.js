@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
 const BrandDashboard2 = () => {
   const { id } = useParams();
   const [shop, setShop] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios
@@ -13,6 +14,13 @@ const BrandDashboard2 = () => {
       .then((res) => setShop(res.data))
       .catch((err) => console.error(err));
   }, [id]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("shopId");
+    navigate("/");
+  };
 
   if (!shop)
     return (
@@ -24,29 +32,28 @@ const BrandDashboard2 = () => {
     menuItem.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  console.log({filteredMenuItems})
   return (
     <div
-      style={{display: "flex",width: "100%",gap: "20px",background: "linear-gradient(to right, #e0f7fa, #ffffff)", position: "absolute", left: "0", zIndex: "1",
+      style={{display: "flex",width: "100%", height: "100vh",gap: "20px",position: "absolute", left: "0", zIndex: "1",
       }}
     >
       {/* Left Section */}
       <div
-        style={{flex: "3",backdropFilter: "blur(10px)",background: "linear-gradient(to right, #e0f7fa, #ffffff)",boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)",
-          border: "1px solid rgba(255, 255, 255, 0.3)",padding: "20px",borderRadius: "10px",
+        style={{flex: "3",backdropFilter: "blur(10px)",  boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)",
+          border: "1px solid rgba(255, 255, 255, 0.3)",borderRadius: "10px",
         }}
       >
         <h1
-          style={{textAlign: "center",color: " black",fontSize: "32px",marginBottom: "20px",
+          style={{textAlign: "center",color: " white",fontSize: "32px",marginBottom: "20px", marginTop: "20px",
           }}
         >
-          {shop.title}
+          {shop?.title}
         </h1>
         <div
-          style={{display: "flex",justifyContent: "center",marginBottom: "20px",
+          style={{display: "flex",justifyContent: "center",marginBottom: "10px",
           }}
         >
-          <img src={shop.image} alt={shop.title}
+          <img src={shop.image} alt={shop?.title}
             style={{ width: "100%",maxWidth: "500px",borderRadius: "10px",boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)",
             }}
           />
@@ -60,8 +67,8 @@ const BrandDashboard2 = () => {
 
         {/* Menu Items */}
         <h2
-          style={{textAlign: "center",marginTop: "30px",color: "black",fontSize: "28px",display: "flex",
-            justifyContent: "center",alignItems: "center",flexDirection: "column",
+          style={{textAlign: "center",color: "white",fontSize: "28px",display: "flex",
+            justifyContent: "center",alignItems: "center",flexDirection: "column",marginBottom: "10px",
           }}
         >
           {/* Search Box */}
@@ -70,7 +77,7 @@ const BrandDashboard2 = () => {
             placeholder="Search Shop's..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            style={{width: "60%",padding: "10px",fontSize: "18px",marginBottom: "20px",borderRadius: "5px",
+            style={{width: "60%",padding: "10px",fontSize: "18px",borderRadius: "5px", marginTop: "25px",
               border: "1px solid #ddd",
             }}
           />
@@ -78,14 +85,14 @@ const BrandDashboard2 = () => {
         </h2>
         {shop.menuItems && shop.menuItems.length > 0 ? (
           <div
-            style={{ display: "grid",gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",gap: "20px",marginTop: "20px",
+            style={{ display: "flex",gap: "20px",width: "100vw", overflowX: "auto",alignItems: "center", position: "absolute", bottom: "100px",
             }}
           >
             {filteredMenuItems.map((menuItem, index) => (
               <div
                 key={index}
                 style={{backdropFilter: "blur(10px)",background: "white",boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)",border: "1px solid rgba(255, 255, 255, 0.3)",
-                  padding: "20px", borderRadius: "8px", textAlign: "center", position: "relative",
+                  padding: "20px", borderRadius: "8px", textAlign: "center", position: "relative", display: "flex",flexDirection: "column",
                 }}
               >
                 <h3
@@ -105,7 +112,7 @@ const BrandDashboard2 = () => {
                   <img
                     src={menuItem.image}
                     alt={menuItem.name}
-                    style={{ width: "100%",maxWidth: "500px",height: "200px" ,borderRadius: "5px",marginTop: "10px",
+                    style={{ width: "350px",height: "200px" ,borderRadius: "5px",marginTop: "10px",
                     }}
                   />
                   
@@ -113,7 +120,13 @@ const BrandDashboard2 = () => {
                 {menuItem.link && (
                   <div style={{ marginTop: "10px" }}>
                     <a
-                      href={`/${shop.title}/${menuItem._id}/${menuItem.link}`}
+                      // href={`/${shop.title}/${menuItem._id}`}
+                      href={`/?callbackUrl=${menuItem._id}`}
+                      onClick={
+                        () => {
+                          localStorage.removeItem("token")
+                        }
+                      }
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{
@@ -144,6 +157,17 @@ const BrandDashboard2 = () => {
           </p>
         )}
       </div>
+      <button onClick={handleLogout} style={{ padding: "12px",
+    background: "#ff4d4d",
+    color: "#fff",
+    border: "none",
+    position: "fixed",
+    left: "15px",
+    top: "10px",
+    zIndex: "2",
+    borderRadius: "5px",
+    cursor: "pointer",
+    marginTop: "10px",}}>Logout</button>
     </div>
   );
 };

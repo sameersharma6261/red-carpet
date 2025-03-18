@@ -69,21 +69,6 @@ const Counter = () => {
   };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   // Handle button click
   const handleClick = async (index) => {
     const newData = JSON.parse(JSON.stringify([...data]));
@@ -99,16 +84,6 @@ const Counter = () => {
     }
   };
 
-
-
-
-
-
-
-
-
-
-  
   // Handle sending the message
   const handleSendMessage = async (number) => {
     if (!number) {

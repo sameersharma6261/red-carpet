@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { gsap } from "gsap";
 
 const AuthPage = () => {
@@ -12,6 +12,24 @@ const AuthPage = () => {
   const navigate = useNavigate();
   const formRef = useRef(null);
   const titleRef = useRef(null);
+  const [searchParams] = useSearchParams()
+  // console.log(searchParams.toLocaleString());
+  // 🔹 Redirect if user is already logged in
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+    const shopId = localStorage.getItem("shopId");
+
+    if (token) {  
+      if (role === "owner" && shopId) {
+        navigate(`/branddashboard2/${shopId}`);
+      } else if (role === "superadmin") {
+        navigate("/branddashboard");
+      } else {
+        navigate(`/?${searchParams.toString()}`);
+      }
+    }
+  }, [navigate,searchParams]);
 
   useEffect(() => {
     gsap.fromTo(
@@ -27,28 +45,37 @@ const AuthPage = () => {
     );
   }, []);
 
+
+
   const handleAuth = async (e) => {
     e.preventDefault();
     setLoading(true);
-
-    // Check if the user is the owner
-    if (email === "itsoftlab@gmail.com" && password === "9109622511") {
-      setLoading(false);
-      navigate("/ownerdashboard");
-      return;
-    }
 
     try {
       const url = isSignup
         ? `${process.env.REACT_APP_API_BASE_URL}/api/auth/signup`
         : `${process.env.REACT_APP_API_BASE_URL}/api/auth/login`;
-      const data = isSignup ? { name, email, password } : { email, password };
-
+      const data = isSignup ? { name, email, password,role:'owner' } : { email, password };
+  
       const res = await axios.post(url, data);
-
+  
+      console.log("API Response:",JSON.stringify( res.data,null , 2)); // 👀 Check API Response
+  
       if (!isSignup) {
         localStorage.setItem("token", res.data.token);
-        navigate("/BrandDashboard");
+        localStorage.setItem("role", res.data.user.role || "user"); // Default role set karein agar undefined ho
+        localStorage.setItem("shopId", res.data.shopId || ""); // 👈 Shop ID store karna
+        // Redirect based on role
+        if (res.data.user.role === "owner") {
+          navigate(`/branddashboard2/${res.data.shopId}`);
+        } else if (res.data.user.role === "superadmin") {
+          navigate("/branddashboard");
+        }
+         else if (res.data.user.role === "shop") {
+          navigate(`/${searchParams.get("callbackUrl")}`);
+        }else{
+          navigate("/");
+        }
       } else {
         alert("Signup successful, please login.");
         setIsSignup(false);
@@ -59,6 +86,8 @@ const AuthPage = () => {
       setLoading(false);
     }
   };
+  
+  
 
   return (
     <div style={styles.container}>
@@ -110,13 +139,16 @@ const AuthPage = () => {
               {isSignup ? "Sign Up" : "Login"}
             </button>
           )}
+          <a style={{color: "white", textDecoration: "none", padding: "10px"}} href="/forgotpassword">Forgot Password?</a>
         </form>
-        <p style={styles.toggleText} onClick={() => setIsSignup(!isSignup)}>
+        {/* <p style={styles.toggleText} onClick={() => setIsSignup(!isSignup)}>
           {isSignup ? "Already have an account? Login" : "Don't have an account? Sign Up"}
-        </p>
+        </p> */}
+      
+
+        
       </div>
 
-      {/* Spinner Animation CSS */}
       <style>
         {`
           .spinner {
@@ -149,13 +181,17 @@ const styles = {
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
-    background: "linear-gradient(to right, #e0f7fa, #ffffff)",
+    // background: "linear-gradient(to right, #e0f7fa, #ffffff)",
+   
+    // backgroundImage: "url('/images/f.jpg')", // 🖼️ Background image
+    // backgroundSize: "cover",
+    // backgroundPosition: "center",
     transition: "all 0.5s ease-in-out",
     zIndex: 1,
   },
   formContainer: {
     backdropFilter: "blur(10px)",
-    background: "rgba(98, 193, 248, 0.82)",
+    background: "rgba(63, 128, 167, 0.49)",
     boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)",
     border: "1px solid rgba(255, 255, 255, 0.3)",
     borderRadius: "15px",

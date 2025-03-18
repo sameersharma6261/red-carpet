@@ -6,7 +6,11 @@ const MenuModal = ({ shop, onClose }) => {
     name: "", 
     image: "", 
     description: "" ,
-    link: ""  //  New field added for storing the link
+    link: "a",  //  New field added for storing the link
+    email: "",
+    password: "",
+    shopconpassword: "",
+    role: ""
   });
 
   const handleChange = (e) => {
@@ -35,13 +39,16 @@ const MenuModal = ({ shop, onClose }) => {
   return (
     <div>
       {/* <h1>Add Menu for {shop?.title || "this shop item"}</h1> */}
-      <form onSubmit={handleSubmit}>
+      <form style={{display: "flex", justifyContent: "center", alignItems: "center", width: "100vw"}} onSubmit={handleSubmit}>
       <button style={{ padding: "10px 20px", background: "#ff6347", color: "#fff", border: "none", cursor: "pointer", borderRadius: "5px" }} onClick={onClose}>Close</button>
-        <input type="text" name="name" placeholder="Item Name" value={menuItem.name} onChange={handleChange} required style={{ padding: "10px", margin: "5px", width: "250px" }}/>
-        <input type="text" name="image" placeholder="Image URL" value={menuItem.image} onChange={handleChange} required style={{ padding: "10px", margin: "5px", width: "250px" }} />
-        <input type="text" name="description" placeholder="Description" value={menuItem.description} onChange={handleChange} required style={{ padding: "10px", margin: "5px", width: "250px" }} />
-        <input type="text" name="link" placeholder="Enter Link" value={menuItem.link} onChange={handleChange} required style={{ padding: "10px", margin: "5px", width: "250px" }} />
-        <button type="submit" style={{ padding: "10px 20px",marginBottom: "25px", background: "rgba(47,140,227)", color: "#fff", border: "none", cursor: "pointer", borderRadius: "5px" }}>Add Menu</button>
+        <input type="text" name="name" placeholder="Item Name" value={menuItem.name} onChange={handleChange} required style={{ padding: "10px", margin: "5px", width: "100%" }}/>
+        <input type="text" name="image" placeholder="Image URL" value={menuItem.image} onChange={handleChange} required style={{ padding: "10px", margin: "5px", width: "100%" }} />
+        <input type="text" name="description" placeholder="Description" value={menuItem.description} onChange={handleChange} required style={{ padding: "10px", margin: "5px", width: "100%" }} />
+        <input type="text" name="email" placeholder="email" value={menuItem.email} onChange={handleChange} required style={{ padding: "10px", margin: "5px", width: "100%" }} />
+        <input type="text" name="password" placeholder="password" value={menuItem.password} onChange={handleChange} required style={{ padding: "10px", margin: "5px", width: "100%" }} />
+        <input type="text" name="shopconpassword" placeholder="conferm password" value={menuItem.shopconpassword} onChange={handleChange} required style={{ padding: "10px", margin: "5px", width: "100%" }} />
+        <input type="text" name="role" placeholder="role" value={menuItem.role} onChange={handleChange} required style={{ padding: "10px", margin: "5px", width: "100%" }} />
+        <button type="submit" style={{ padding: "3px 20px", background: "rgba(47,140,227)", color: "#fff", border: "none", cursor: "pointer", borderRadius: "5px" }}>Add Shop's</button>
       </form>
     </div>
   );

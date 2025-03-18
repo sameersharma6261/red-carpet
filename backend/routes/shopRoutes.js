@@ -12,24 +12,24 @@ router.get("/shops", async (req, res) => {
   }
 });
 
-// ✅ Add new shop item
-router.post("/shops", async (req, res) => {
-  const { title, description, image } = req.body;
+// // ✅ Add new shop item
+// router.post("/shops", async (req, res) => {
+//   const { title, description, image} = req.body;
   
-  const shop = new Shop({
-    title,
-    description,
-    image,
-    menuItems: [], //
-  });
+//   const shop = new Shop({
+//     title,
+//     description,
+//     image,
+//     menuItems: [],
+//   });
 
-  try {
-    const newShop = await shop.save();
-    res.status(201).json(newShop);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
+//   try {
+//     const newShop = await shop.save();
+//     res.status(201).json(newShop);
+//   } catch (err) {
+//     res.status(400).json({ message: err.message });
+//   }
+// });
 
 // ✅ Add Menu Item to a Shop
 router.post("/shops/:id/menu", async (req, res) => {
@@ -37,7 +37,7 @@ router.post("/shops/:id/menu", async (req, res) => {
     const shop = await Shop.findById(req.params.id);
     if (!shop) return res.status(404).json({ message: "Shop not found" });
 
-    // ✅ Fix: Ensure menuItems exists
+    // Fix: Ensure menuItems exists
     if (!shop.menuItems) {
       shop.menuItems = [];
     }
@@ -51,7 +51,7 @@ router.post("/shops/:id/menu", async (req, res) => {
   }
 });
 
-// ✅ Get Menu Items of a Shop
+// Get Menu Items of a Shop
 router.get("/shops/:id/menu", async (req, res) => {
   try {
     const shop = await Shop.findById(req.params.id);
@@ -83,7 +83,7 @@ router.get("/shops/:id", async (req, res) => {
 router.put("/update-menu-item/:shopId/:menuItemName", async (req, res) => {
   try {
     const { shopId, menuItemName } = req.params;
-    const { newName, newLink, newDescription } = req.body;
+    const { newName, newLink, newDescription, newEmail, newPassword, newShopConPassword, newRole} = req.body;
 
     const shop = await Shop.findById(shopId);
     if (!shop) return res.status(404).json({ message: "Shop item not found" });
@@ -95,6 +95,11 @@ router.put("/update-menu-item/:shopId/:menuItemName", async (req, res) => {
     menuItem.name = newName;
     menuItem.link = newLink;
     menuItem.description = newDescription;
+    menuItem.email = newEmail;
+    menuItem.password = newPassword;
+    menuItem.shopconpassword = newShopConPassword;
+    menuItem.role = newRole;
+
 
     await shop.save(); // Save to MongoDB
     res.json({ success: true, message: "Menu item updated", shop });
@@ -103,3 +108,4 @@ router.put("/update-menu-item/:shopId/:menuItemName", async (req, res) => {
   }
 });
 
+module.exports = router;

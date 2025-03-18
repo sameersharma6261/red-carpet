@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 
-const userSchema = new mongoose.Schema({
+const userTokenSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true
@@ -27,5 +27,5 @@ const userSchema = new mongoose.Schema({
   timestamps:true
 });
 
-const User = mongoose.model('PhoenixUser', userSchema);
+const User = mongoose.model('PhoenixUser', userTokenSchema);
 module.exports = User;
