@@ -109,14 +109,14 @@ function Information() {
       return;
     }
 
-    if (
-      name === "itsoftlab" &&
-      mobile === "9109622511" &&
-      email === "itsoftlab@gmail.com"
-    ) {
-      navigate(`/${id}/counter`); // Navigate to the new page
-      return;
-    }
+    // if (
+    //   name === "itsoftlab" &&
+    //   mobile === "9109622511" &&
+    //   email === "itsoftlab@gmail.com"
+    // ) {
+    //   navigate(`/${id}/counter`); // Navigate to the new page
+    //   return;
+    // }
     const token = generateToken(); // Generate a unique token
 
     

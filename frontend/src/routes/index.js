@@ -81,17 +81,17 @@ const AppRoutes = () => {
             <Route path="BrandDashboard" element={<BrandDashboard />} />
             <Route path="/shop/:id" element={<ShopDetail />} />
             <Route path="/branddashboard2/:id" element={<BrandDashboard2 />} />
-            <Route path="/:id/counter" element={<Counter />} />
             <Route path="/:id/editdisplay" element={<EditDisplay />} />
-            <Route path="/:id/token" element={<Token />} />
             <Route path="/:id/countdown" element={<Countdown />} />
             <Route path="/display" element={<Display />} />
-            <Route path="/:id/information" element={<Information />} />
+          </Route>
             <Route path="/:id">
               <Route index element={<Home />} />
               <Route path="information" element={<Information />} />
             </Route>
-          </Route>
+            <Route path="/:id/token" element={<Token />} />
+            <Route path="/:id/information" element={<Information />} />
+            <Route path="/:id/counter" element={<Counter />} />
           <Route path="/forgotpassword" element={<ForgotPassword />} />
 
         </Route>

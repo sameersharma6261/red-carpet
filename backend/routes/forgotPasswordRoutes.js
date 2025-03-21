@@ -3,6 +3,7 @@ const router = express.Router();
 const Food = require("../models/Shop"); // Aapka schema
 const bcrypt = require("bcryptjs");
 
+
 // Step 1: Email aur role input lo
 
 
@@ -101,6 +102,7 @@ router.post("/reset-password", async (req, res) => {
     // ✅ If updated successfully
     if (userUpdated) {
       return res.json({ message: "Password updated successfully" });
+      
     }
 
     // ❌ If no user found

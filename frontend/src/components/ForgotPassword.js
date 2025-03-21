@@ -52,20 +52,20 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div style={{height: "100vh", width: "100%", display: "flex", justifyContent: "center", alignItems: "center"}}>
+    <div style={{height: "100vh", background: "white", width: "100vw", display: "flex", justifyContent: "center", alignItems: "center"}}>
       {step === 1 ? (
-        <div>
+        <div style={{width: "300px", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", gap: "10px"}}>
           <h2>Forgot Password</h2>
-          <input style={{padding: "10px"}} type="email" placeholder="Enter Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-          <input style={{padding: "10px"}} type="text" placeholder="Enter Role" value={role} onChange={(e) => setRole(e.target.value)} />
-          <button style={{padding: "10px"}} onClick={handleCheckUser}>Next</button>
+          <input style={{padding: "10px", width: "100%"}} type="email" placeholder="Enter Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <input style={{padding: "10px", width: "100%"}} type="text" placeholder="Enter Role" value={role} onChange={(e) => setRole(e.target.value)} />
+          <button style={{color: "white", padding: "10px", width: "100%", background: "rgb(98, 203, 211)", cursor: "pointer"}} onClick={handleCheckUser}>Next</button>
         </div>
       ) : (     
-        <div style={{zIndex: "1000"}}>
+        <div style={{width: "300px", display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", gap: "10px"}}>
           <h2>Reset Password</h2>
-          <input style={{padding: "10px"}} type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-          <input style={{padding: "10px"}} type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-          <button style={{padding: "10px"}} onClick={handleResetPassword}>Update Password</button>
+          <input style={{padding: "10px", width: "100%"}} type="password" placeholder="New Password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+          <input style={{padding: "10px", width: "100%"}} type="password" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+          <button style={{padding: "10px", width: "100%", background: "rgb(98, 203, 211)", cursor: "pointer"}} onClick={handleResetPassword}>Update Password</button>
         </div>
       )}
     </div>

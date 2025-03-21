@@ -25,9 +25,10 @@ const AuthPage = () => {
         navigate(`/branddashboard2/${shopId}`);
       } else if (role === "superadmin") {
         navigate("/branddashboard");
-      } else {
-        navigate(`/?${searchParams.toString()}`);
       }
+      //  else {
+      //   navigate(`/?${searchParams.toString()}`);
+      // }
     }
   }, [navigate,searchParams]);
 
@@ -72,7 +73,7 @@ const AuthPage = () => {
           navigate("/branddashboard");
         }
          else if (res.data.user.role === "shop") {
-          navigate(`/${searchParams.get("callbackUrl")}`);
+          navigate(`/${searchParams.get("callbackUrl")}/counter`);
         }else{
           navigate("/");
         }

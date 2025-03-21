@@ -44,22 +44,22 @@ const BrandDashboard2 = () => {
         }}
       >
         <h1
-          style={{textAlign: "center",color: " white",fontSize: "32px",marginBottom: "20px", marginTop: "20px",
+          style={{textAlign: "center",color: " white",fontSize: "32px",marginBottom: "10px", marginTop: "10px",zIndex: "5"
           }}
         >
           {shop?.title}
         </h1>
         <div
-          style={{display: "flex",justifyContent: "center",marginBottom: "10px",
+          style={{display: "flex",justifyContent: "center",marginBottom: "10px", zIndex: "5"
           }}
         >
           <img src={shop.image} alt={shop?.title}
-            style={{ width: "100%",maxWidth: "500px",borderRadius: "10px",boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)",
+            style={{ width: "100%",maxWidth: "500px",borderRadius: "10px",boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)"
             }}
           />
         </div>
         <p
-          style={{textAlign: "center",fontSize: "18px",color: "gray",lineHeight: "1.6",
+          style={{textAlign: "center",fontSize: "18px",color: "gray",lineHeight: "1.6", zIndex: "6"
           }}
         >
           {shop.description}
@@ -68,7 +68,7 @@ const BrandDashboard2 = () => {
         {/* Menu Items */}
         <h2
           style={{textAlign: "center",color: "white",fontSize: "28px",display: "flex",
-            justifyContent: "center",alignItems: "center",flexDirection: "column",marginBottom: "10px",
+            justifyContent: "center",alignItems: "center",flexDirection: "column",marginBottom: "10px",zIndex: "5"
           }}
         >
           {/* Search Box */}
@@ -77,15 +77,15 @@ const BrandDashboard2 = () => {
             placeholder="Search Shop's..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            style={{width: "60%",padding: "10px",fontSize: "18px",borderRadius: "5px", marginTop: "25px",
-              border: "1px solid #ddd",
+            style={{width: "60%",padding: "10px",fontSize: "18px",borderRadius: "5px", marginTop: "5px",
+              border: "1px solid #ddd",zIndex: "5"
             }}
           />
-          SHOP'S
+          {/* SHOP'S */}
         </h2>
         {shop.menuItems && shop.menuItems.length > 0 ? (
           <div
-            style={{ display: "flex",gap: "20px",width: "100vw", overflowX: "auto",alignItems: "center", position: "absolute", bottom: "100px",
+            style={{ display: "flex",gap: "20px",width: "100vw", overflowX: "auto",alignItems: "center", position: "absolute", bottom: "17px",zIndex: "3"
             }}
           >
             {filteredMenuItems.map((menuItem, index) => (
@@ -163,7 +163,7 @@ const BrandDashboard2 = () => {
     border: "none",
     position: "fixed",
     left: "15px",
-    top: "10px",
+    top: "1px",
     zIndex: "2",
     borderRadius: "5px",
     cursor: "pointer",

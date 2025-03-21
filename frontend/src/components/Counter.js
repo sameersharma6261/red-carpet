@@ -129,6 +129,26 @@ const Counter = () => {
     localStorage.removeItem("isAuthenticated"); // Remove auth state
   };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   // Login Page
   if (!isAuthenticated) {
     return (
@@ -221,6 +241,20 @@ const Counter = () => {
       </div>
     );
   }
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
 
   // counter Page
   const tableHeaderStyle = {

@@ -76,7 +76,9 @@ const ShopDetail = () => {
             : item
         );
         setShop({ ...shop, menuItems: updatedItems });
+        
         setEditingItem(null);
+        window.location.reload();
       }
     } catch (error) {
       console.error("Error updating menu item:", error);
@@ -266,21 +268,6 @@ const styles = {
     color: "white",
     padding: "15px",
   },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   card: {

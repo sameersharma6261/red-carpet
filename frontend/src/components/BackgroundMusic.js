@@ -40,7 +40,7 @@ const BackgroundMusic = () => {
 const styles = {
   container: {
     position: "fixed",
-    top: "15px",
+    top: "8px",
     right: "20px",
     zIndex: 2,
   },
