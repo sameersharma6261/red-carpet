@@ -18,7 +18,7 @@ const BrandDashboard = () => {
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_BASE_URL}/shops`)
+      .get(`${process.env.REACT_APP_API_BASE_URL}/api/shops`)
       .then((res) => setFoods(res.data));
   }, []);
 
@@ -44,10 +44,6 @@ const BrandDashboard = () => {
         textAlign: "center",
         width: "100vw",
         height: "100vh",
-        // background: "linear-gradient(to right,rgb(0, 0, 0),rgb(148, 148, 148))",
-        // backgroundImage: "url('/images/f.jpg')", // 🖼️ Background image
-        // backgroundSize: "cover",
-        // backgroundPosition: "center",
 
         fontFamily: "Arial, sans-serif",
         zIndex: "1",
@@ -69,8 +65,6 @@ const BrandDashboard = () => {
           border: "1px solid #ccc",
           marginBottom: "20px",
           background: "transparent",
-          // background: "linear-gradient(to right,rgba(79, 172, 254, 0.7),rgba(0, 241, 254, 0.6))",
-          // boxShadow:"0px 1px 4px black",
           fontSize: "16px",
         }}
       />
@@ -167,10 +161,37 @@ const BrandDashboard = () => {
         ))}
       </div>
       <button
+        onClick={() => navigate("/qrcode")}
+        style={{
+          padding: "10px 15px",
+          borderRadius: "10px",
+          border: "none",
+          cursor: "pointer",
+          position: "fixed",
+          left: "15px",
+          bottom: "60px",
+          color: "white",
+          fontSize: "15px",
+          fontWeight: "bold",
+          background: "linear-gradient(to right, #4facfe, #00f2fe)",
+          transform: "skewX(-20deg)", // Parallelogram effect
+          boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)", // Depth effect
+          backdropFilter: "blur(5px)", // Glassmorphism effect
+          transition: "0.3s",
+          zIndex: "3",
+        }}
+        onMouseEnter={(e) =>
+          (e.target.style.transform = "skewX(-20deg) scale(1.1)")}
+        onMouseLeave={(e) => (e.target.style.transform = "skewX(-20deg)")}
+      >
+        QR-Code
+      </button>
+
+      <button
         onClick={() => navigate("/ownerdashboard")}
         style={{
-          padding: "12px",
-          borderRadius: "20px",
+          padding: "10px 15px",
+          borderRadius: "10px",
           border: "none",
           cursor: "pointer",
           position: "fixed",
@@ -178,10 +199,17 @@ const BrandDashboard = () => {
           bottom: "15px",
           color: "white",
           fontSize: "15px",
-          background: "linear-gradient(to right, #4facfe, #00f2fe)",
           fontWeight: "bold",
+          background: "linear-gradient(to right, #4facfe, #00f2fe)",
+          transform: "skewX(-20deg)", // Parallelogram effect
+          boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)", // Depth effect
+          backdropFilter: "blur(5px)", // Glassmorphism effect
+          transition: "0.3s",
           zIndex: "3",
         }}
+        onMouseEnter={(e) =>
+          (e.target.style.transform = "skewX(-20deg) scale(1.1)")}
+        onMouseLeave={(e) => (e.target.style.transform = "skewX(-20deg)")}
       >
         SETTING
       </button>
@@ -203,6 +231,7 @@ const BrandDashboard = () => {
       >
         Logout
       </button>
+      
     </div>
   );
 };

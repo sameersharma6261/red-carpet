@@ -67,6 +67,8 @@ import BrandDashboard2 from "../components/BrandDashboard2";
 import Display from "../components/Display";
 import ProtectedRoute from "../components/ProtectedRoute";
 import ForgotPassword from "../components/ForgotPassword";
+import QrCode from "../components/QrCode";
+
 
 const AppRoutes = () => {
   return (
@@ -81,6 +83,8 @@ const AppRoutes = () => {
             <Route path="BrandDashboard" element={<BrandDashboard />} />
             <Route path="/shop/:id" element={<ShopDetail />} />
             <Route path="/branddashboard2/:id" element={<BrandDashboard2 />} />
+            <Route path="/qrcode" element={<QrCode />} />
+            <Route path="/:id/counter" element={<Counter />} />
             <Route path="/:id/editdisplay" element={<EditDisplay />} />
             <Route path="/:id/countdown" element={<Countdown />} />
             <Route path="/display" element={<Display />} />
@@ -91,7 +95,7 @@ const AppRoutes = () => {
             </Route>
             <Route path="/:id/token" element={<Token />} />
             <Route path="/:id/information" element={<Information />} />
-            <Route path="/:id/counter" element={<Counter />} />
+            {/* <Route path="/:id/counter" element={<Counter />} /> */}
           <Route path="/forgotpassword" element={<ForgotPassword />} />
 
         </Route>

@@ -49,7 +49,7 @@ const MenuModal = ({ shop, onClose }) => {
         <input type="text" name="password" placeholder="password" value={menuItem.password} onChange={handleChange} required style={{ padding: "10px", margin: "5px", width: "100%" }} />
         <input type="text" name="shopconpassword" placeholder="conferm password" value={menuItem.shopconpassword} onChange={handleChange} required style={{ padding: "10px", margin: "5px", width: "100%" }} />
         <input type="text" name="role" placeholder="role" value={menuItem.role} onChange={handleChange} required style={{ padding: "10px", margin: "5px", width: "100%" }} />
-        <button type="submit" style={{ padding: "3px 20px", background: "rgba(47,140,227)", color: "#fff", border: "none", cursor: "pointer", borderRadius: "5px" }}>Add Shop's</button>
+        <button type="submit" style={{ padding: "3px 20px", background: "linear-gradient(to right,rgb(254, 105, 79),rgb(254, 30, 0)", color: "#fff", border: "none", cursor: "pointer", borderRadius: "5px" }}>Add Shop's</button>
       </form>
     </div>
   );

@@ -3,7 +3,7 @@ const router = express.Router();
 const Shop = require("../models/Shop");
 
 // ✅ Fetch all shops
-router.get("/shops", async (req, res) => {
+router.get("/api/shops", async (req, res) => {
   try {
     const shops = await Shop.find();
     res.json(shops);
@@ -32,7 +32,7 @@ router.get("/shops", async (req, res) => {
 // });
 
 // ✅ Add Menu Item to a Shop
-router.post("/shops/:id/menu", async (req, res) => {
+router.post("/api/shops/:id/menu", async (req, res) => {
   try {
     const shop = await Shop.findById(req.params.id);
     if (!shop) return res.status(404).json({ message: "Shop not found" });
@@ -52,7 +52,7 @@ router.post("/shops/:id/menu", async (req, res) => {
 });
 
 // Get Menu Items of a Shop
-router.get("/shops/:id/menu", async (req, res) => {
+router.get("/api/shops/:id/menu", async (req, res) => {
   try {
     const shop = await Shop.findById(req.params.id);
     if (!shop) return res.status(404).json({ message: "Shop not found" });
@@ -67,7 +67,7 @@ module.exports = router;
 
 
 // ✅ Fetch a single shop item along with menu items
-router.get("/shops/:id", async (req, res) => {
+router.get("/api/shops/:id", async (req, res) => {
     try {
       const shop = await Shop.findById(req.params.id);
       if (!shop) return res.status(404).json({ message: "Shop not found" });
@@ -80,7 +80,7 @@ router.get("/shops/:id", async (req, res) => {
   
 
   // Update Menu Item
-router.put("/update-menu-item/:shopId/:menuItemName", async (req, res) => {
+router.put("/api/update-menu-item/:shopId/:menuItemName", async (req, res) => {
   try {
     const { shopId, menuItemName } = req.params;
     const { newName, newLink, newDescription, newEmail, newPassword, newShopConPassword, newRole} = req.body;

@@ -88,7 +88,7 @@ const AuthPage = () => {
     }
   };
   
-  
+    
 
   return (
     <div style={styles.container}>

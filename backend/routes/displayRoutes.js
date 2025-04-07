@@ -5,7 +5,7 @@ const DisplayModel = require("../models/DisplayModel");
 
 
 // ✅ API to insert 
-router.post("/api/display", async (req, res) => {
+router.post("/display", async (req, res) => {
     try {
       const newData = new DisplayModel(req.body);
       await newData.save();
@@ -17,7 +17,7 @@ router.post("/api/display", async (req, res) => {
   });
   
   // ✅ API to get saved data where project ID matches displayid
-  router.get("/api/display/:id", async (req, res) => {
+  router.get("/display/:id", async (req, res) => {
     try {
       const { id } = req.params; // 🔹 Get ID from URL
   
@@ -35,7 +35,7 @@ router.post("/api/display", async (req, res) => {
   });
   
   // ✅ API to update existing data where project ID matches displayid
-  router.put("/api/display/:id", async (req, res) => {
+  router.put("/display/:id", async (req, res) => {
     try {
         const { id } = req.params;
         console.log("Received ID:", id);

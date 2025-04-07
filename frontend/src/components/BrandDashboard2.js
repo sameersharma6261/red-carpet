@@ -10,7 +10,7 @@ const BrandDashboard2 = () => {
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_BASE_URL}/shops/${id}`)
+      .get(`${process.env.REACT_APP_API_BASE_URL}/api/shops/${id}`)
       .then((res) => setShop(res.data))
       .catch((err) => console.error(err));
   }, [id]);

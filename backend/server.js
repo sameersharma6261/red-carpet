@@ -53,7 +53,7 @@ app.use(express.urlencoded({ limit: "200mb", extended: true }));
 
 // API route
 app.use("/api", dataRoutes);
-app.use("/", displayRoutes);
+app.use("/api", displayRoutes);
 
 // // Schema and Model
 // const InfoSchema = new mongoose.Schema({
@@ -117,7 +117,7 @@ const CountdownSchema = new mongoose.Schema({
 const Countdown = mongoose.model("Countdown", CountdownSchema);
 
 // Start Countdown API
-app.post("/start-countdown", async (req, res) => {
+app.post("/api/start-countdown", async (req, res) => {
   const { duration, phoneNumber, shopId } = req.body;
   const startTime = Date.now();
 
@@ -144,7 +144,7 @@ app.post("/start-countdown", async (req, res) => {
 });
 
 // Get Current Countdown
-app.get("/get-countdown", async (req, res) => {
+app.get("/api/get-countdown", async (req, res) => {
   try {
     const countdown = await Countdown.findOne();
     res.json(countdown);
@@ -160,7 +160,7 @@ io.on("connection", (socket) => {
 });
 
 // Send OTP
-app.post("/send-otp", async (req, res) => {
+app.post("/api/send-otp", async (req, res) => {
   const { mobile } = req.body;
   const otp = Math.floor(1000 + Math.random() * 9000);
   otpStore[mobile] = otp;
@@ -192,7 +192,7 @@ app.post("/send-otp", async (req, res) => {
 });
 
 // Verify OTP
-app.post("/verify-otp", (req, res) => {
+app.post("/api/verify-otp", (req, res) => {
   const { mobile, otp } = req.body;
 
   if (!otpStore[mobile]) {
@@ -210,7 +210,7 @@ app.post("/verify-otp", (req, res) => {
 });
 
 // Retrieve Latest Token
-app.get("/get-token", async (req, res) => {
+app.get("/api/get-token", async (req, res) => {
   try {
     console.log("---------------------------------------");
     const now = new Date();
@@ -230,7 +230,7 @@ app.get("/get-token", async (req, res) => {
 });
 
 // Send Message
-app.post("/send-message", async (req, res) => {
+app.post("/api/send-message", async (req, res) => {
   const { number } = req.body;
 
   if (!number) {
@@ -308,12 +308,12 @@ app.post("/send-message", async (req, res) => {
 // });
 
 // GET API
-app.get("/shops", async (req, res) => {
+app.get("/api/shops", async (req, res) => {
   const shops = await Shop.find();
   res.json(shops);
 });
 
-app.get("/menus/:id", async (req, res) => {
+app.get("/api/menus/:id", async (req, res) => {
   try {
     const menuItems = await Menu.find({ shopId: req.params.id });
     res.json(menuItems);
@@ -323,7 +323,7 @@ app.get("/menus/:id", async (req, res) => {
 });
 
 
-app.put("/shops/:id", async (req, res) => {
+app.put("/api/shops/:id", async (req, res) => {
   const { id } = req.params;
   const updatedData = req.body;
 const hassPas = await bcrypt.hash(req.body.password, 10);
@@ -340,7 +340,7 @@ const hassPas = await bcrypt.hash(req.body.password, 10);
   }
 });
 
-app.get("/shops/:id", async (req, res) => {
+app.get("/api/shops/:id", async (req, res) => {
   try {
     const shop = await Shop.findById(req.params.id);
     if (!shop) return res.status(404).json({ message: "Shop not found" });
@@ -353,7 +353,7 @@ app.get("/shops/:id", async (req, res) => {
 
 
 // ye hai edit or save karne ke liye(fruits names, example)
-app.put("/shops/update-menu-item/:id/:name", async (req, res) => {
+app.put("/api/shops/update-menu-item/:id/:name", async (req, res) => {
   const { id, name } = req.params;
   const {
     newName,
@@ -406,7 +406,7 @@ app.put("/shops/update-menu-item/:id/:name", async (req, res) => {
 });
 
 // ye hai menu ke jo items he vo delete karne ke liye(fruits names example)
-app.delete("/shops/delete-menu-item/:id/:name", async (req, res) => {
+app.delete("/api/shops/delete-menu-item/:id/:name", async (req, res) => {
   const { id, name } = req.params;
 
   try {
@@ -463,7 +463,7 @@ app.delete("/shops/delete-menu-item/:id/:name", async (req, res) => {
 
 
 // hashed password hai ish mai
-app.post("/shops", async (req, res) => {
+app.post("/api/shops", async (req, res) => {
   try {
     // Pehle password hash karo
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -491,7 +491,7 @@ app.post("/shops", async (req, res) => {
   }
 });
 
-app.delete("/shops/:id", async (req, res) => {
+app.delete("/api/shops/:id", async (req, res) => {
   try {
     const shopId = req.params.id;
     const deletedShop = await Shop.findByIdAndDelete(shopId);

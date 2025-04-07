@@ -10,7 +10,7 @@ const Countdown = () => {
 
   useEffect(() => {
     // Fetch Initial Countdown
-    fetch(`${process.env.REACT_APP_API_BASE_URL}/get-countdown`)
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/api/get-countdown`)
       .then((res) => res.json())
       .then((data) => {
         if (data) {

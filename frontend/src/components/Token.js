@@ -13,7 +13,7 @@ function Token() {
   useEffect(() => {
     const fetchToken = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/get-token?phone=${localStorage.getItem("phone")}`);
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/get-token?phone=${localStorage.getItem("phone")}`);
         console.log("Token Response:", response.data);
         setToken(response.data.token);
         // localStorage.setItem("token", response.data.token); // Save in local storage

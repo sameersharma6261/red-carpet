@@ -124,7 +124,7 @@ function Information() {
     setIsLoading(true);
     try {
       const { data } = await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/send-otp`,
+        `${process.env.REACT_APP_API_BASE_URL}/api/send-otp`,
         {
           mobile,
           name,
@@ -151,7 +151,7 @@ function Information() {
   const verifyOtp = async () => {
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/verify-otp`,
+        `${process.env.REACT_APP_API_BASE_URL}/api/verify-otp`,
         {
           mobile,
           otp,

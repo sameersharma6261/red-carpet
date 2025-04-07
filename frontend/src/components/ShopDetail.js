@@ -22,7 +22,7 @@ const ShopDetail = () => {
     const fetchShopDetails = async () => {
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_API_BASE_URL}/shops/${id}`
+          `${process.env.REACT_APP_API_BASE_URL}/api/shops/${id}`
         );
         setShop(response.data);
       } catch (error) {
@@ -47,7 +47,7 @@ const ShopDetail = () => {
   const handleSave = async (menuItem) => {
     try {
       const response = await axios.put(
-        `${process.env.REACT_APP_API_BASE_URL}/shops/update-menu-item/${id}/${menuItem.name}`,
+        `${process.env.REACT_APP_API_BASE_URL}/api/shops/update-menu-item/${id}/${menuItem.name}`,
         {
           newName: editedName,
           newLink: editedLink,
@@ -88,7 +88,7 @@ const ShopDetail = () => {
   const handleDelete = async (menuItem) => {
     try {
       const response = await axios.delete(
-        `${process.env.REACT_APP_API_BASE_URL}/shops/delete-menu-item/${id}/${menuItem.name}`
+        `${process.env.REACT_APP_API_BASE_URL}/api/shops/delete-menu-item/${id}/${menuItem.name}`
       );
       if (response.data.success) {
         const updatedItems = shop.menuItems.filter(
@@ -346,7 +346,7 @@ const styles = {
     borderRadius: "5px",
   },
   editButton: {
-    background: "linear-gradient(to right, #4facfe, #00f2fe)",
+    background: "linear-gradient(to right,rgb(254, 105, 79),rgb(254, 30, 0)",
     color: "#fff",
     border: "none",
     padding: "8px 12px",

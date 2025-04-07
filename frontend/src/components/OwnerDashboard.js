@@ -25,7 +25,7 @@ const OwnerDashboard = () => {
   };
 
   useEffect(() => {
-    axios.get(`${process.env.REACT_APP_API_BASE_URL}/shops`).then((res) => {
+    axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/shops`).then((res) => {
       setFoods(res.data);
     });
   }, []);
@@ -46,7 +46,7 @@ const OwnerDashboard = () => {
     if (editFood) {
       axios
         .put(
-          `${process.env.REACT_APP_API_BASE_URL}/shops/${editFood._id}`,
+          `${process.env.REACT_APP_API_BASE_URL}/api/shops/${editFood._id}`,
           newFood
         )
         .then((res) => {
@@ -66,7 +66,7 @@ const OwnerDashboard = () => {
         });
     } else {
       axios
-        .post(`${process.env.REACT_APP_API_BASE_URL}/shops`, newFood)
+        .post(`${process.env.REACT_APP_API_BASE_URL}/api/shops`, newFood)
         .then((res) => {
           setFoods([...shops, res.data]);
           setNewFood({
@@ -89,7 +89,7 @@ const OwnerDashboard = () => {
 
   const handleDelete = (id) => {
     axios
-      .delete(`${process.env.REACT_APP_API_BASE_URL}/shops/${id}`)
+      .delete(`${process.env.REACT_APP_API_BASE_URL}/api/shops/${id}`)
       .then(() => {
         setFoods(shops.filter((shop) => shop._id !== id));
       });
@@ -101,25 +101,9 @@ const OwnerDashboard = () => {
     shop?.title?.toLowerCase().includes(search.toLowerCase())
   );
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   return (
     <div className="dashboard-container">
-      <h1 style={{ color: "white", marginBottom: "20px", fontSize: "28px",  }}>
+      <h1 style={{ color: "white", marginBottom: "20px", fontSize: "28px" }}>
         SELECT YOUR MALL
       </h1>
       <input
@@ -223,10 +207,38 @@ const OwnerDashboard = () => {
           </div>
         ))}
         <button
+          onClick={() => navigate("/qrcode")}
+          style={{
+            padding: "10px 15px",
+            borderRadius: "10px",
+            border: "none",
+            cursor: "pointer",
+            position: "fixed",
+            left: "15px",
+            bottom: "60px",
+            color: "white",
+            fontSize: "15px",
+            fontWeight: "bold",
+            background:
+              "linear-gradient(to right,rgb(254, 105, 79),rgb(254, 30, 0))",
+            transform: "skewX(-20deg)", // Parallelogram effect
+            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)", // Depth effect
+            backdropFilter: "blur(5px)", // Glassmorphism effect
+            transition: "0.3s",
+            zIndex: "3",
+          }}
+          onMouseEnter={(e) =>
+            (e.target.style.transform = "skewX(-20deg) scale(1.1)")
+          }
+          onMouseLeave={(e) => (e.target.style.transform = "skewX(-20deg)")}
+        >
+          QR-Code
+        </button>
+        <button
           onClick={() => navigate("/branddashboard")}
           style={{
-            padding: "12px",
-            borderRadius: "20px",
+            padding: "10px 15px",
+            borderRadius: "10px",
             border: "none",
             cursor: "pointer",
             position: "fixed",
@@ -234,22 +246,22 @@ const OwnerDashboard = () => {
             bottom: "15px",
             color: "white",
             fontSize: "15px",
-            background: "#ff4d4d",
             fontWeight: "bold",
+            background: "linear-gradient(to right,rgb(254, 105, 79),rgb(254, 30, 0))",
+            transform: "skewX(-20deg)", // Parallelogram effect
+            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)", // Depth effect
+            backdropFilter: "blur(5px)", // Glassmorphism effect
+            transition: "0.3s",
             zIndex: "3",
           }}
+          onMouseEnter={(e) =>
+            (e.target.style.transform = "skewX(-20deg) scale(1.1)")
+          }
+          onMouseLeave={(e) => (e.target.style.transform = "skewX(-20deg)")}
         >
           SETTING
         </button>
       </div>
-
-
-
-
-
-
-
-
 
       <style>{`
         .dashboard-container {
@@ -305,19 +317,8 @@ const OwnerDashboard = () => {
           .shop-form button{
           color: #fff;
           cursor: pointer;
-          background: linear-gradient(to right,rgba(79, 172, 254, 0.64),rgba(0, 241, 254, 0.69));}
-
-
-
-
-
-
-
-
-
-
-
-
+          background: linear-gradient(to right,rgb(254, 105, 79),rgb(254, 30, 0));
+          }
 
         .shop-container {
           display: flex;
@@ -350,7 +351,7 @@ const OwnerDashboard = () => {
           border-radius: 10px;
         }
         .button-group button {
-          background: linear-gradient(to right, #4facfe, #00f2fe);
+          background: linear-gradient(to right,rgb(254, 105, 79),rgb(254, 30, 0));
           color: white;
           border: none;
           padding: 10px 25px;
@@ -362,7 +363,7 @@ const OwnerDashboard = () => {
           transition: 0.3s;
         }
         .button-group button:hover {
-          background: linear-gradient(to right, #00f2fe, #4facfe);
+          background: linear-gradient(to right, rgb(254, 30, 0), rgb(254, 105, 79));
         }
           @media (max-width: 677px) {
            .shop-form input, .shop-form button {
