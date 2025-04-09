@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  backend:
+    image: "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:${BACKEND_TAG}"
+    container_name: "red-carpet_backend_${ENVIRONMENT}_${COLOR}"
+    env_file:
+      - backend/.env
+    ports:
+      - "${HOST_BACKEND_PORT}:5000"
+    restart: always
+    # networks:
+    #   - "red-carpet_network"
+    
+
+  frontend:
+    image: "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:${FRONTEND_TAG}"
+    container_name: "red-carpet_frontend_${ENVIRONMENT}_${COLOR}"
+    env_file:
+      - frontend/.env
+    ports:
+      - "${HOST_FRONTEND_PORT}:3000"
+    stdin_open: true
+    tty: true
+    restart: always
+    # networks:
+    #   - "red-carpet_network"
+
+# networks:
+#   red-carpet_network:
+#     name: "red-carpet_network_${ENVIRONMENT}_${COLOR}"
+#     driver: bridge

@@ -12,6 +12,7 @@ const authRoutes = require("./routes/auth");
 const menuRoutes = require("./routes/menuRoutes"); // ✅ Add this line
 const displayRoutes = require("./routes/displayRoutes"); // ✅ Add this line
 const forgotPasswordRoutes = require("./routes/forgotPasswordRoutes"); // Ensure path is correct
+const utilityRoutes = require("./routes/utilityRoute"); // Ensure path is correct
 
 const bcrypt = require("bcryptjs");
 
@@ -31,6 +32,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", authRoutes);
 app.use("/api", menuRoutes); // ✅ Add this line
 app.use("/api", forgotPasswordRoutes); // Route prefix should match frontend call
+
+// Do not change this, is it used for deployment health check,
+app.use("/api", utilityRoutes); // Route prefix should match frontend call
 
 
 // Database Connection
@@ -322,15 +326,18 @@ app.get("/api/menus/:id", async (req, res) => {
   }
 });
 
-
 app.put("/api/shops/:id", async (req, res) => {
   const { id } = req.params;
   const updatedData = req.body;
-const hassPas = await bcrypt.hash(req.body.password, 10);
+  const hassPas = await bcrypt.hash(req.body.password, 10);
   try {
-    const updatedShop = await Shop.findByIdAndUpdate(id, {...updatedData,password:hassPas}, {
-      new: true,
-    });
+    const updatedShop = await Shop.findByIdAndUpdate(
+      id,
+      { ...updatedData, password: hassPas },
+      {
+        new: true,
+      }
+    );
     if (!updatedShop) {
       return res.status(404).json({ message: "Shop not found" });
     }
@@ -349,8 +356,6 @@ app.get("/api/shops/:id", async (req, res) => {
     res.status(500).json({ message: "Error fetching shop", error });
   }
 });
-
-
 
 // ye hai edit or save karne ke liye(fruits names, example)
 app.put("/api/shops/update-menu-item/:id/:name", async (req, res) => {
@@ -393,7 +398,6 @@ app.put("/api/shops/update-menu-item/:id/:name", async (req, res) => {
       const hashedPassword = await bcrypt.hash(newPassword, 10);
       shop.menuItems[itemIndex].password = hashedPassword;
     }
-
 
     // Save to database
     await shop.save();
@@ -442,7 +446,6 @@ app.delete("/api/shops/delete-menu-item/:id/:name", async (req, res) => {
   }
 });
 
-
 // POST API
 // app.post("/shops", async (req, res) => {
 //   const shop = new Shop(req.body);
@@ -459,8 +462,6 @@ app.delete("/api/shops/delete-menu-item/:id/:name", async (req, res) => {
 //   await user.save();
 //   res.json(shop);
 // });
-
-
 
 // hashed password hai ish mai
 app.post("/api/shops", async (req, res) => {
@@ -483,7 +484,7 @@ app.post("/api/shops", async (req, res) => {
     });
 
     await user.save();
-    
+
     res.json(shop);
   } catch (error) {
     console.error(error);

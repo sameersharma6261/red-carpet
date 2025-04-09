@@ -1,0 +1,26 @@
+upstream redcarpet_frontend {
+    # Initially, the active staging deployment listens on staging primary port
+    server 127.0.0.1:3200;
+}
+
+upstream redcarpet_backend {
+    server 127.0.0.1:5200;
+}
+
+server {
+    server_name redcarpet.qrblack.com;
+
+    location / {
+        proxy_pass http://redcarpet_frontend;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+
+    location /api/ {
+        proxy_pass http://redcarpet_backend;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+
+
+}

@@ -46,10 +46,6 @@
 
 // export default AppRoutes;
 
-
-
-
-
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router";
 import AppLayout from "../App";
@@ -69,14 +65,13 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import ForgotPassword from "../components/ForgotPassword";
 import QrCode from "../components/QrCode";
 
-
 const AppRoutes = () => {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<AppLayout />}>
           <Route index element={<AuthPage />} />
-          
+
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
             <Route path="/ownerdashboard" element={<OwnerDashboard />} />
@@ -89,15 +84,23 @@ const AppRoutes = () => {
             <Route path="/:id/countdown" element={<Countdown />} />
             <Route path="/display" element={<Display />} />
           </Route>
-            <Route path="/:id">
-              <Route index element={<Home />} />
-              <Route path="information" element={<Information />} />
-            </Route>
-            <Route path="/:id/token" element={<Token />} />
-            <Route path="/:id/information" element={<Information />} />
-            {/* <Route path="/:id/counter" element={<Counter />} /> */}
+          <Route path="/:id">
+            <Route index element={<Home />} />
+            <Route path="information" element={<Information />} />
+          </Route>
+          <Route path="/:id/token" element={<Token />} />
+          <Route path="/:id/information" element={<Information />} />
+          {/* <Route path="/:id/counter" element={<Counter />} /> */}
           <Route path="/forgotpassword" element={<ForgotPassword />} />
-
+          {/* Version route do not change this */}
+          <Route
+            path="/version"
+            element={<>{process.env?.REACT_APP_VERSION || "Unknown"}</>}
+          />
+          <Route
+            path="/health"
+            element={<>OK</>}
+          />
         </Route>
       </Routes>
     </BrowserRouter>

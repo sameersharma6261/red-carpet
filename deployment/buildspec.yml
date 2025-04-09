@@ -1,0 +1,68 @@
+version: 0.2
+
+env:
+  variables:
+    AWS_DEFAULT_REGION: "ap-south-1"
+    RED_CARPET_ECR_REPO: "615299768302.dkr.ecr.ap-south-1.amazonaws.com/red-carpet"
+
+phases:
+  pre_build:
+    commands:
+      - set -e # Stop execution on failure
+
+      - echo "🔹 Checking Docker status..."
+      - docker info
+
+      - echo "🔹 Logging into AWS ECR..."
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $RED_CARPET_ECR_REPO
+
+      - echo "🔹 Determining Secrets ARN based on environment..."
+      - |
+        if [ "$ENVIRONMENT" = "production" ]; then
+          SECRET_ARN="arn:aws:secretsmanager:ap-south-1:615299768302:secret:red-carpet-frontend-env-GeDBF4"
+        else
+          SECRET_ARN="arn:aws:secretsmanager:ap-south-1:615299768302:secret:red-carpet-frontend-env-GeDBF4"
+        fi
+        echo "Using Secrets ARN: $SECRET_ARN"
+
+      - echo "🔹 Fetching secrets from AWS Secrets Manager..."
+      - |
+        SECRET_JSON=$(aws secretsmanager get-secret-value --secret-id $SECRET_ARN --query SecretString --output text)
+        for VAR in REACT_APP_API_BASE_URL; do
+          export $VAR=$(echo $SECRET_JSON | jq -r .$VAR)
+        done
+
+  build:
+    commands:
+      - set -e # Stop execution on failure
+
+      - echo "🔹 Building frontend Docker image..."
+      - |
+        docker build \
+          --build-arg REACT_APP_API_BASE_URL="$REACT_APP_API_BASE_URL" \
+          --build-arg REACT_APP_VERSION="$TAG_NAME" \
+          --build-arg NODE_ENV="$ENVIRONMENT" \
+          -t $FRONTEND_TAG -f frontend/Dockerfile frontend
+
+      - echo "🔹 Building backend Docker image..."
+      - |
+        docker build \
+        --build-arg APP_VERSION="$TAG_NAME" \
+        --build-arg NODE_ENV="$ENVIRONMENT" \
+        -t $BACKEND_TAG ./backend
+
+  post_build:
+    commands:
+      - set -e # Stop execution on failure
+
+      - echo "🔹 Tagging and pushing frontend image..."
+      - docker tag $FRONTEND_TAG $RED_CARPET_ECR_REPO:$FRONTEND_TAG
+      - docker push $RED_CARPET_ECR_REPO:$FRONTEND_TAG
+
+      - echo "🔹 Tagging and pushing backend image..."
+      - docker tag $BACKEND_TAG $RED_CARPET_ECR_REPO:$BACKEND_TAG
+      - docker push $RED_CARPET_ECR_REPO:$BACKEND_TAG
+
+artifacts:
+  files:
+    - imagedefinitions.json
