@@ -11,7 +11,6 @@ services:
     restart: always
     # networks:
     #   - "red-carpet_network"
-    
 
   frontend:
     image: "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:${FRONTEND_TAG}"
@@ -20,12 +19,12 @@ services:
       - frontend/.env
     ports:
       - "${HOST_FRONTEND_PORT}:3200"
+
     stdin_open: true
     tty: true
     restart: always
     # networks:
     #   - "red-carpet_network"
-
 # networks:
 #   red-carpet_network:
 #     name: "red-carpet_network_${ENVIRONMENT}_${COLOR}"
