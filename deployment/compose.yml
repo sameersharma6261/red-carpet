@@ -19,7 +19,7 @@ services:
     env_file:
       - frontend/.env
     ports:
-      - "${HOST_FRONTEND_PORT}:3000"
+      - "${HOST_FRONTEND_PORT}:3200"
     stdin_open: true
     tty: true
     restart: always

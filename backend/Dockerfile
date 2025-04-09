@@ -17,7 +17,7 @@ ENV APP_VERSION=$APP_VERSION
 
 
 # Expose the port your Express app listens on (adjust if needed)
-EXPOSE 5300
+EXPOSE 5200
 
 # Set the environment to production (if not already set via your .env or run command)
 ENV NODE_ENV=production
