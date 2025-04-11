@@ -4,6 +4,8 @@ services:
   backend:
     image: "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:${BACKEND_TAG}"
     container_name: "red-carpet_backend_${ENVIRONMENT}_${COLOR}"
+    environment:
+      - NODE_OPTIONS=--max-old-space-size=256
     env_file:
       - backend/.env
     ports:
@@ -15,6 +17,8 @@ services:
   frontend:
     image: "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:${FRONTEND_TAG}"
     container_name: "red-carpet_frontend_${ENVIRONMENT}_${COLOR}"
+    environment:
+      - NODE_OPTIONS=--max-old-space-size=128
     env_file:
       - frontend/.env
     ports:
