@@ -2,6 +2,7 @@ import { Outlet } from 'react-router';
 import './App.css';
 import Display from './components/Display';
 import BackgroundMusic from './components/BackgroundMusic';
+// import Video from './components/Video';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
    <Display />
    <Outlet />
    <BackgroundMusic />
+   {/* <Video /> */}
    <div className="circleee"></div>
    </>
   );
