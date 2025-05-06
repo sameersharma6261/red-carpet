@@ -13,7 +13,7 @@ function Explain() {
     if (event.key === "Enter") {
       document.getElementById("buyButton").click();
     }
-  };
+  };  
   useEffect(() => {
     document.addEventListener("keydown", handleKeyDown);
     return () => {

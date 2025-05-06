@@ -171,8 +171,9 @@ function Information() {
           }
         );
 
-        alert("OTP verified & data saved successfully!");
-        navigate(`/${id}/Token`);
+        alert("OTP verified successfully!");
+        // navigate(`/${id}/Token`);
+        navigate(`/${id}/paymentpage`);
       } else {
         alert("Invalid OTP, please try again!");
       }

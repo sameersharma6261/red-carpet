@@ -62,6 +62,7 @@ import ShopDetail from "../components/ShopDetail";
 import BrandDashboard2 from "../components/BrandDashboard2";
 import Display from "../components/Display";
 import ProtectedRoute from "../components/ProtectedRoute";
+import PaymentPage from "../components/PaymentPage";
 import ForgotPassword from "../components/ForgotPassword";
 import QrCode from "../components/QrCode";
 
@@ -83,10 +84,12 @@ const AppRoutes = () => {
             <Route path="/:id/editdisplay" element={<EditDisplay />} />
             <Route path="/:id/countdown" element={<Countdown />} />
             <Route path="/display" element={<Display />} />
+            
           </Route>
           <Route path="/:id">
             <Route index element={<Home />} />
             <Route path="information" element={<Information />} />
+            <Route path="paymentpage" element={<PaymentPage />} />
           </Route>
           <Route path="/:id/token" element={<Token />} />
           <Route path="/:id/information" element={<Information />} />
