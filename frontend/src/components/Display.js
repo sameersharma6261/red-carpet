@@ -111,8 +111,55 @@ function Display() {
 
   return (
     <>
-      {/* Injecting CSS directly in the component */}
-      <style>{`
+    
+      <div className="display-container">
+        {/* <button onClick={() => setIsEditing(!isEditing)}>Edit</button> */}
+
+        {isEditing && (
+          <div className="edit-box">
+            <input type="file" onChange={handleImageChange} />
+            <input
+              type="text"
+              value={phoenixText}
+              onChange={(e) => setPhoenixText(e.target.value)}
+              placeholder="Edit Phoenix Text"
+            />
+            <input
+              type="text"
+              value={pText}
+              onChange={(e) => setPText(e.target.value)}
+              placeholder="Edit P Text"
+            />
+            <input
+              type="text"
+              value={royalPassText}
+              onChange={(e) => setRoyalPassText(e.target.value)}
+              placeholder="Edit Royal Pass Text"
+            />
+            <button onClick={handleUpdate}>Save</button>
+          </div>
+        )}
+
+        <div className="animated-display">
+          <div
+            className="circle-container"
+            style={{ backgroundImage: `url(${backgroundImage})` }}
+          >
+            <div className="slider-wrapper">
+              <div className="slider-text">{phoenixText}</div>
+              <div className="slider-text">{phoenixText}</div>
+            </div>
+          </div>
+          <div className="circle-container-text">
+            <div className="p">{pText}</div>
+            <div className="royal-pass">{royalPassText}</div>
+          </div>
+        </div>
+      </div>
+
+
+
+        <style>{`
         *{
     margin: 0;
     padding: 0;
@@ -159,7 +206,7 @@ function Display() {
 /* Sliding Text */
 .slider-text {
   white-space: nowrap;
-  font-size: 250px;
+  font-size: 260px;
   font-weight: 900;
   opacity: 80%;
   line-height: 1;
@@ -202,6 +249,7 @@ function Display() {
   font-weight: 600;    
   height: 35vh;
   color: white;
+  left: 10px;
   font-size: 300px;
   display: flex;
   align-items: center;
@@ -209,69 +257,28 @@ function Display() {
 }
 .royal-pass{
     position: absolute;
-    bottom: 60px;
+    bottom: 62px;
     left: 70px;
     padding: 0;
     margin: 0;
     font-size: 45px;
   font-weight: 900;
-  background: linear-gradient(90deg, #f5f3f6, #3498db, #f1c40f );
+  background: linear-gradient(90deg,rgb(226, 241, 15) ,rgb(217, 137, 108),rgb(255, 255, 255));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   overflow: hidden;
 }
-@media screen and (max-width: 440px) {
+@media screen and (max-width: 646px) {
   .royal-pass{
+  position: absolute;
     font-size: 34px;
-    bottom: 65px;
+    bottom: 64px;
+    left: 100px;
+    // background: red;
   }
 }
 
       `}</style>
-      <div className="display-container">
-        {/* <button onClick={() => setIsEditing(!isEditing)}>Edit</button> */}
-
-        {isEditing && (
-          <div className="edit-box">
-            <input type="file" onChange={handleImageChange} />
-            <input
-              type="text"
-              value={phoenixText}
-              onChange={(e) => setPhoenixText(e.target.value)}
-              placeholder="Edit Phoenix Text"
-            />
-            <input
-              type="text"
-              value={pText}
-              onChange={(e) => setPText(e.target.value)}
-              placeholder="Edit P Text"
-            />
-            <input
-              type="text"
-              value={royalPassText}
-              onChange={(e) => setRoyalPassText(e.target.value)}
-              placeholder="Edit Royal Pass Text"
-            />
-            <button onClick={handleUpdate}>Save</button>
-          </div>
-        )}
-
-        <div className="animated-display">
-          <div
-            className="circle-container"
-            style={{ backgroundImage: `url(${backgroundImage})` }}
-          >
-            <div className="slider-wrapper">
-              <div className="slider-text">{phoenixText}</div>
-              <div className="slider-text">{phoenixText}</div>
-            </div>
-          </div>
-          <div className="circle-container-text">
-            <div className="p">{pText}</div>
-            <div className="royal-pass">{royalPassText}</div>
-          </div>
-        </div>
-      </div>
     </>
   );
 }

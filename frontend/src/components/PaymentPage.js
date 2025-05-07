@@ -4,12 +4,7 @@ import { useParams } from "react-router";
 import { useNavigate } from "react-router-dom";
 
 
-
-interface PaymentPageProps {
-  amount: number;
-}
-
-const PaymentPage: React.FC<PaymentPageProps> = ({ amount }) => {
+const PaymentPage = ({ amount }) => {
 
   
   const handlePayment = () => {

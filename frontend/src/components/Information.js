@@ -18,6 +18,7 @@ function Information() {
   const [isEmailValid, setIsEmailValid] = useState(false); // State for email validity
   const navigate = useNavigate();
 
+
   // Validate email format
   const validateEmail = (e) => {
     e.preventDefault(); // Prevent form submission
@@ -160,7 +161,7 @@ function Information() {
 
       if (response.data.success) {
         // OTP verify hone ke baad data save karo
-        await axios.post(
+      const {data}  =   await axios.post(
           `${process.env.REACT_APP_API_BASE_URL}/api/information`,
           {
             name,
@@ -170,10 +171,11 @@ function Information() {
             shopid: id
           }
         );
+        console.log(data?.newInfo?._id)
 
         alert("OTP verified successfully!");
         // navigate(`/${id}/Token`);
-        navigate(`/${id}/paymentpage`);
+        navigate(`/${id}/paymentpage?userId=${data?.newInfo?._id}`);
       } else {
         alert("Invalid OTP, please try again!");
       }
@@ -271,6 +273,17 @@ function Information() {
           </>
         )}
       </div>
+
+
+
+
+
+
+
+
+
+
+      
     </>
   );
 }

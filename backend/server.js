@@ -163,12 +163,28 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => console.log("Client disconnected"));
 });
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Send OTP
 app.post("/api/send-otp", async (req, res) => {
   const { mobile } = req.body;
   const otp = Math.floor(1000 + Math.random() * 9000);
   otpStore[mobile] = otp;
-
   try {
     if (process.env.IS_OTP_SERVICE_AVAILABLE === "true") {
       await client.messages.create({
@@ -195,23 +211,90 @@ app.post("/api/send-otp", async (req, res) => {
   }
 });
 
-// Verify OTP
-app.post("/api/verify-otp", (req, res) => {
-  const { mobile, otp } = req.body;
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+// // Verify OTP
+// app.post("/api/verify-otp", (req, res) => {
+//   const { mobile, otp } = req.body;
+
+//   if (!otpStore[mobile]) {
+//     return res
+//       .status(400)
+//       .json({ error: "No OTP found for this mobile number" });
+//   }
+
+//   if (parseInt(otp) === otpStore[mobile]) {
+//     delete otpStore[mobile];
+//     return res.json({ success: true, message: "OTP verified successfully" });
+//   } else {
+//     return res.status(400).json({ error: "Invalid OTP, please try again" });
+//   }
+// });
+
+
+
+
+
+app.post("/api/verify-otp", async (req, res) => {
+  const { mobile, otp } = req.body;
   if (!otpStore[mobile]) {
-    return res
-      .status(400)
-      .json({ error: "No OTP found for this mobile number" });
+    return res.status(400).json({ error: "No OTP found for this mobile number" });
   }
 
   if (parseInt(otp) === otpStore[mobile]) {
-    delete otpStore[mobile];
-    return res.json({ success: true, message: "OTP verified successfully" });
+    // OTP match ho gaya, ab database me check karo
+    try {
+      const user = await User.findOne({ mobile });
+
+      if (user) {
+        console.log("User ID:", user._id); // ✅ Print user ID to console
+      } else {
+        console.log("Mobile number not found in database.");
+      }
+
+      delete otpStore[mobile];
+      return res.json({ success: true, message: "OTP verified successfully" });
+    } catch (error) {
+      console.error("Database error:", error);
+      return res.status(500).json({ error: "Server error" });
+    }
   } else {
     return res.status(400).json({ error: "Invalid OTP, please try again" });
   }
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Retrieve Latest Token
 app.get("/api/get-token", async (req, res) => {
