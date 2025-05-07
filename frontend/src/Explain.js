@@ -88,7 +88,7 @@ function Explain() {
               ×
             </button>
             <img
-              src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=HelloReact"
+              src="/images/qr.png"
               alt="QR Code"
               className="qr-image"
             />
