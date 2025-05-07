@@ -35,5 +35,4 @@ EXPOSE 3200
 # Serve the static files from the build folder on port 3200
 CMD ["serve", "-s", "build", "-l", "3200"]
 
-
 #  docker build --build-arg REACT_APP_API_BASE_URL=https://api.example.com   --build-arg REACT_APP_VERSION=1.0.0   --build-arg VITE_PERMISSION_ALLOCATION_URI=http://localhost:5010/Permission-Allocation-Microservice   --build-arg VITE_HOST=cylinder.ltd,www.cylinder.ltd   --build-arg VITE_FRONTEND_PORT=3000   -t my-reactite-app .
