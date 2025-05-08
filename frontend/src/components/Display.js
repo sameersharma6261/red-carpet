@@ -258,7 +258,7 @@ function Display() {
 .royal-pass{
     position: absolute;
     bottom: 62px;
-    left: 70px;
+    left: 85px;
     padding: 0;
     margin: 0;
     font-size: 45px;
@@ -272,8 +272,8 @@ function Display() {
   .royal-pass{
   position: absolute;
     font-size: 34px;
-    bottom: 64px;
-    left: 100px;
+    bottom: 50px;
+    left: 83px;
     // background: red;
   }
 }

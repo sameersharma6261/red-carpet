@@ -194,7 +194,8 @@ function Information() {
       )}
 
       <div className="contact-form">
-        <div className="heading">WELCOME TO BLUE CART SERVICE</div>
+        {/* <div className="heading">WELCOME TO BLUE CART SERVICE</div> */}
+        <div className="heading">Verify Your Self In Blue Cart Service</div>
 
         {/* Display email error message */}
         {emailError && <div className="error-message">{emailError}</div>}

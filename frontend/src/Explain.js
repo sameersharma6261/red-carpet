@@ -53,7 +53,7 @@ function Explain() {
     <div>
       <div className="explaination">
         <div className="text-content">
-          <h2>Welcome to RED CARPET Special Entry</h2>
+          <h2>Welcome To Red Carpet</h2>
           <p>
           We are thrilled to have you here today. This blue cart is a symbol of exclusivity and convenience,
         specially designed for our valued Rick and Loyal members. Your comfort and satisfaction are our top priority,
