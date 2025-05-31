@@ -4,6 +4,8 @@ env:
   variables:
     AWS_DEFAULT_REGION: "ap-south-1"
     RED_CARPET_ECR_REPO: "615299768302.dkr.ecr.ap-south-1.amazonaws.com/red-carpet"
+    S3_ENV_BUCKET: "secure-env-files-itsoftlab"
+
 
 phases:
   pre_build:
@@ -16,20 +18,17 @@ phases:
       - echo "🔹 Logging into AWS ECR..."
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $RED_CARPET_ECR_REPO
 
-      - echo "🔹 Determining Secrets ARN based on environment..."
-      - |
-        if [ "$ENVIRONMENT" = "production" ]; then
-          SECRET_ARN="arn:aws:secretsmanager:ap-south-1:615299768302:secret:red-carpet-frontend-env-GeDBF4"
-        else
-          SECRET_ARN="arn:aws:secretsmanager:ap-south-1:615299768302:secret:red-carpet-frontend-env-GeDBF4"
-        fi
-        echo "Using Secrets ARN: $SECRET_ARN"
+      - echo "→ Will fetch s3://$S3_ENV_BUCKET/$FRONTEND_SECRET_KEY"
 
-      - echo "🔹 Fetching secrets from AWS Secrets Manager..."
+      - echo "🔹 Downloading .env from S3..."
+      - aws s3 cp "s3://$S3_ENV_BUCKET/$FRONTEND_SECRET_KEY" ./app.env --region $AWS_DEFAULT_REGION
+      - chmod 600 ./app.env
+
       - |
-        SECRET_JSON=$(aws secretsmanager get-secret-value --secret-id $SECRET_ARN --query SecretString --output text)
         for VAR in REACT_APP_API_BASE_URL; do
-          export $VAR=$(echo $SECRET_JSON | jq -r .$VAR)
+          # Get the value from the .env file and export it
+          VAR_VALUE=$(grep -E "^$VAR=" app.env | cut -d'=' -f2-)
+          eval export $VAR="$VAR_VALUE"
         done
 
   build:

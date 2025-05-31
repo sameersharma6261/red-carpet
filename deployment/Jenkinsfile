@@ -37,6 +37,17 @@ pipeline {
         // Nginx conf files
         NGINX_STAGING_CONF = 'redcarpet.qrblack.com.conf'
         NGINX_PRODUCTION_CONF = 'redcarpet.qrblack.com.conf'
+        APP_NAME = 'red-carpet'
+
+        // S3 bucket for your env files
+        S3_ENV_BUCKET = 'secure-env-files-itsoftlab'
+        // Frontend keys
+        FRONTEND_PRODUCTION_ENV_S3_KEY  = 'red-carpet-frontend-production-env'
+        FRONTEND_STAGING_ENV_S3_KEY     = 'red-carpet-frontend-staging-env'
+
+        // Backend keys
+        BACKEND_PRODUCTION_ENV_S3_KEY   = 'red-carpet-backend-production-env'
+        BACKEND_STAGING_ENV_S3_KEY      = 'red-carpet-backend-staging-env'
     }
 
     stages {
@@ -82,6 +93,20 @@ pipeline {
             }
         }
 
+        stage('Determine secret key file') {
+            steps {
+                script {
+                    // Determine which S3 keys to use based on the environment
+                    if (env.ENVIRONMENT == 'production') {
+                        env.FRONTEND_SECRET_KEY = "${env.FRONTEND_PRODUCTION_ENV_S3_KEY}.env"
+                        env.BACKEND_SECRET_KEY = "${env.BACKEND_PRODUCTION_ENV_S3_KEY}.env"
+                    } else {
+                        env.FRONTEND_SECRET_KEY = "${env.FRONTEND_STAGING_ENV_S3_KEY}.env"
+                        env.BACKEND_SECRET_KEY = "${env.BACKEND_STAGING_ENV_S3_KEY}.env"
+                    }
+                }
+            }
+        }
         stage('Check and Trigger AWS CodeBuild') {
             steps {
                 script {
@@ -111,6 +136,7 @@ pipeline {
                                 name=ENVIRONMENT,value='${env.ENVIRONMENT}',type=PLAINTEXT \
                                 name=FRONTEND_TAG,value='${env.FRONTEND_TAG}',type=PLAINTEXT \
                                 name=BACKEND_TAG,value='${env.BACKEND_TAG}',type=PLAINTEXT \
+                                name=FRONTEND_SECRET_KEY,value='${env.FRONTEND_SECRET_KEY}',type=PLAINTEXT \
                             --query 'build.id' --output text
                         """, returnStdout: true).trim()
                         if (!env.BUILD_ID?.trim()) {
@@ -196,25 +222,13 @@ pipeline {
                             TEMP_DIR=\$(mktemp -d)
                             git clone --branch "\$TAG" --depth 1 "\$REPO_URL" "\$TEMP_DIR" || { echo "❌ Error: Failed to clone tag \$TAG"; exit 1; }
 
-                            if [ "\$ENV" = "staging" ]; then
-                                FRONTEND_SECRET_NAME="red-carpet-frontend-env"
-                                BACKEND_SECRET_NAME="red-carpet-backend-env"
-                            else
-                                FRONTEND_SECRET_NAME="red-carpet-frontend-env"
-                                BACKEND_SECRET_NAME="red-carpet-backend-env"
-                            fi
-
                             echo "Logging into ECR"
                             AWS_ACCOUNT_ID=\$(aws sts get-caller-identity --query Account --output text)
                             ECR_URL="\${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}"
                             aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin \${ECR_URL}
 
-                            echo "🔑 Fetching secrets from AWS Secrets Manager..."
-                            FRONTEND_ENV_JSON=\$(aws secretsmanager get-secret-value --secret-id "\$FRONTEND_SECRET_NAME" --query SecretString --output text)
-                            BACKEND_ENV_JSON=\$(aws secretsmanager get-secret-value --secret-id "\$BACKEND_SECRET_NAME" --query SecretString --output text)
-
-                            if [ -z "\$FRONTEND_ENV_JSON" ] || [ -z "\$BACKEND_ENV_JSON" ]; then
-                                echo "❌ Error: Failed to retrieve secrets from AWS Secrets Manager"
+                            if [ -z "${env.FRONTEND_SECRET_KEY}" ] || [ -z "${env.BACKEND_SECRET_KEY}" ]; then
+                                echo "❌ Error: Failed to retrieve secrets from AWS S3. Please check the environment variables."
                                 exit 1
                             fi
 
@@ -263,10 +277,12 @@ pipeline {
                             echo "🚦 Host Frontend Port: \$HOST_FRONTEND_PORT"
                             echo "🚦 Host Backend Port: \$HOST_BACKEND_PORT"
                             echo "🚦 Target Directory: \$TARGET_DIR"
-                            echo "✅ Converting JSON secrets to .env format"
 
-                            echo "\$FRONTEND_ENV_JSON" | jq -r "to_entries | map(\\\"\\(.key)=\\(.value | @text)\\\") | .[]" > "\$TARGET_DIR/frontend/.env"
-                            echo "\$BACKEND_ENV_JSON" | jq -r "to_entries | map(\\\"\\(.key)=\\(.value | @text)\\\") | .[]" > "\$TARGET_DIR/backend/.env"
+                            echo "🔑 Fetching frontend .env from s3://${S3_ENV_BUCKET}/${env.FRONTEND_SECRET_KEY}"
+                            aws s3 cp "s3://${S3_ENV_BUCKET}/${env.FRONTEND_SECRET_KEY}" "\$TARGET_DIR/frontend/.env" --region ${AWS_REGION} || exit 1
+
+                            echo "🔑 Fetching backend .env from s3://${S3_ENV_BUCKET}/${env.BACKEND_SECRET_KEY}"
+                            aws s3 cp "s3://${S3_ENV_BUCKET}/${env.BACKEND_SECRET_KEY}" "\$TARGET_DIR/backend/.env" --region ${AWS_REGION} || exit 1
 
                             printf "AWS_ACCOUNT_ID=%s\\nAWS_REGION=%s\\nECR_REPOSITORY=%s\\nFRONTEND_TAG=%s\\nBACKEND_TAG=%s\\nHOST_FRONTEND_PORT=%s\\nHOST_BACKEND_PORT=%s\\nCOLOR=%s\\nENVIRONMENT=%s\\n" \\
                                 "$AWS_ACCOUNT_ID" "$AWS_REGION" "$ECR_REPOSITORY" "$FRONTEND_TAG" "$BACKEND_TAG" "\$HOST_FRONTEND_PORT" "\$HOST_BACKEND_PORT" "\$NEW_COLOR" "\$ENV" > "\$TARGET_DIR/.env"
@@ -280,9 +296,7 @@ pipeline {
                             sleep 1
 
                             echo "====VARIABLES_START===="
-                            echo "FRONTEND_SECRET_NAME=\$FRONTEND_SECRET_NAME"
                             echo "WORKSPACE_DIR=\$WORKSPACE_DIR"
-                            echo "BACKEND_SECRET_NAME=\$BACKEND_SECRET_NAME"
                             echo "CURRENT_COLOR=\$CURRENT_COLOR"
                             echo "NEW_COLOR=\$NEW_COLOR"
                             echo "HOST_FRONTEND_PORT=\$HOST_FRONTEND_PORT"
@@ -315,8 +329,6 @@ pipeline {
                         }
                     }
 
-                    env.FRONTEND_SECRET_NAME = variables.FRONTEND_SECRET_NAME
-                    env.BACKEND_SECRET_NAME  = variables.BACKEND_SECRET_NAME
                     env.CURRENT_COLOR        = variables.CURRENT_COLOR
                     env.NEW_COLOR            = variables.NEW_COLOR
                     env.HOST_FRONTEND_PORT   = variables.HOST_FRONTEND_PORT
